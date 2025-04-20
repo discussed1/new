@@ -1,0 +1,87 @@
+{% extends 'core/base.html' %}
+{% load core_tags %}
+{% load mptt_tags %}
+
+{% block title %}
+  {{ comment.post.title }} - Thread - Discuss
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 mx-auto">
+      <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+          <li class="breadcrumb-item"><a href="{% url 'community_detail' pk=comment.post.community.id %}">{{ comment.post.community.name }}</a></li>
+          <li class="breadcrumb-item"><a href="{% url 'post_detail' pk=comment.post.id %}">{{ comment.post.title|truncatechars:30 }}</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Continue Thread</li>
+        </ol>
+      </nav>
+      
+      <div class="card mb-4">
+        <div class="card-header bg-secondary d-flex align-items-center">
+          <h1 class="h5 mb-0">
+            <a href="{% url 'post_detail' pk=comment.post.id %}" class="text-white">{{ comment.post.title }}</a>
+          </h1>
+        </div>
+        <div class="card-body">
+          <p class="small text-muted mb-0">
+            You're viewing a single comment thread from the "{{ comment.post.title }}" post.
+            <a href="{% url 'post_detail' pk=comment.post.id %}">View all comments</a>
+          </p>
+        </div>
+      </div>
+      
+      <!-- Parent comment context -->
+      {% if comment.parent %}
+      {% with content_block %}
+          {% include 'core/includes/comment_component.html' with 
+              comment=comment.parent 
+              show_reply_form=False
+              is_compact=True %}
+      {% endwith %}
+      
+      {% include 'core/includes/card_layout.html' with 
+          title="Parent Comment" 
+          content=content_block 
+          card_class="mb-3" %}
+      {% endif %}
+      
+      <!-- Main comment thread -->
+      {% with content_block %}
+          <div class="comments-container" aria-label="Comments section">
+              {% include 'core/includes/comment_thread_component.html' with 
+                  comment=comment 
+                  descendants=descendants 
+                  max_depth=5 
+                  level_adjustment="-2" %}
+          </div>
+      {% endwith %}
+      
+      {% include 'core/includes/card_layout.html' with 
+          title="Comment Thread" 
+          content=content_block 
+          body_class="p-0"
+          card_class="mb-4"
+          header_class="bg-primary text-white" %}
+      
+      <!-- Return to post link -->
+      <div class="text-center mb-4">
+        <a href="{% url 'post_detail' pk=comment.post.id %}#comment-{{ comment.id }}" class="btn btn-outline-primary">
+          <i class="bi bi-arrow-left-circle-fill me-1" aria-hidden="true"></i>
+          Back to full discussion
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<!-- All comment styling is now consolidated in discuss.css and loaded in base.html -->
+{% endblock %}
+
+{% block extra_js %}
+<!-- Reddit comments functionality now integrated in main script.js -->
+{% endblock %}

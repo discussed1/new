@@ -1,0 +1,25 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Python
+*.py text
+*.txt text
+*.md text
+*.html text
+*.css text
+*.js text
+*.json text
+*.xml text
+*.yaml text
+*.yml text
+
+# Media
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.gif binary
+*.ico binary
+*.svg text
+
+# Exclude specific files
+db.sqlite3 binary

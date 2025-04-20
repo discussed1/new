@@ -1,0 +1,10 @@
+{% comment %}
+  Redirects to the posts location of post_vote_buttons.html
+  This is to maintain backward compatibility with existing imports
+{% endcomment %}
+
+{% include 'core/includes/posts/post_vote_buttons.html' with 
+  post=post 
+  user_post_vote=user_post_vote 
+  classes=classes
+%}

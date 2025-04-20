@@ -1,0 +1,11 @@
+{% comment %}
+  Redirects to the components location of action_buttons.html
+  This is to maintain backward compatibility with existing imports
+{% endcomment %}
+
+{% include 'core/includes/components/action_buttons.html' with 
+  post=post 
+  comment=comment 
+  user=user 
+  classes=classes
+%}

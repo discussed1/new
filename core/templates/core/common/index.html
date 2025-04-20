@@ -1,0 +1,129 @@
+{% extends 'core/base.html' %}
+{% load el_pagination_tags core_tags %}
+
+{% block title %}Discuss - Home{% endblock %}
+
+{% block content %}
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">
+                {% if active_tag %}
+                    Posts tagged with <span class="badge bg-light text-dark">#{{ active_tag }}</span>
+                    <a href="{% url 'home' %}" class="btn btn-sm btn-light ms-2" title="Clear filter">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
+                {% else %}
+                    Recent Posts
+                {% endif %}
+            </h4>
+        </div>
+        <div class="card-body p-0">
+            <div class="post-list">
+                {% include "core/includes/posts/post_list.html" %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block sidebar %}
+    <!-- User Communities -->
+    {% if user.is_authenticated %}
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">My Communities</h5>
+            </div>
+            <div class="card-body p-0">
+                {% if user_communities %}
+                    <div class="list-group list-group-flush">
+                        {% for community in user_communities %}
+                            <a href="{% url 'community_detail' community.id %}" class="list-group-item list-group-item-action">
+                                <i class="bi bi-people-fill me-2 text-primary"></i>
+                                d/{{ community.name }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="p-3">
+                        <p>You haven't joined any communities yet.</p>
+                        <a href="{% url 'community_list' %}" class="btn btn-outline-primary btn-sm">Browse Communities</a>
+                    </div>
+                {% endif %}
+                <div class="card-footer">
+                    <a href="{% url 'create_community' %}" class="btn btn-primary btn-sm w-100">
+                        <i class="bi bi-plus-circle me-1"></i> Create Community
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Popular Communities -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="card-title mb-0">Popular Communities</h5>
+        </div>
+        <div class="card-body p-0">
+            {% if popular_communities %}
+                <div class="list-group list-group-flush">
+                    {% for community in popular_communities %}
+                        <a href="{% url 'community_detail' community.id %}" class="list-group-item list-group-item-action">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="bi bi-people-fill me-2 text-primary"></i>
+                                    d/{{ community.name }}
+                                </div>
+                                <span class="badge bg-primary rounded-pill">{{ community.member_count }}</span>
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'community_list' %}" class="btn btn-outline-primary btn-sm w-100">View All Communities</a>
+                </div>
+            {% else %}
+                <div class="p-3">
+                    <p>No communities yet.</p>
+                    <a href="{% url 'create_community' %}" class="btn btn-primary btn-sm">Create a Community</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- About Discuss -->
+    <!-- Popular Tags -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="card-title mb-0">Popular Tags</h5>
+        </div>
+        <div class="card-body">
+            {% with tags=active_tags|default:all_tags %}
+                {% if tags %}
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for tag in tags %}
+                            <a href="{% url 'home' %}?tag={{ tag.slug }}" class="badge bg-light text-dark text-decoration-none">
+                                <i class="bi bi-tag-fill me-1"></i>{{ tag.name }}
+                                {% if tag.num_times %}<span class="ms-1 badge bg-secondary">{{ tag.num_times }}</span>{% endif %}
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="mb-0">No tags available yet.</p>
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5 class="card-title mb-0">About Discuss</h5>
+        </div>
+        <div class="card-body">
+            <p>Discuss is a platform for creating communities, sharing content, and engaging in discussions with others who share your interests.</p>
+            <ul class="list-unstyled mb-0">
+                <li><i class="bi bi-check-circle-fill text-success me-2"></i> Create and join communities</li>
+                <li><i class="bi bi-check-circle-fill text-success me-2"></i> Share news links or text posts</li>
+                <li><i class="bi bi-check-circle-fill text-success me-2"></i> Upvote quality content</li>
+                <li><i class="bi bi-check-circle-fill text-success me-2"></i> Engage in discussions</li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}

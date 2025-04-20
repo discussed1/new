@@ -1,0 +1,47 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Sentry Integration Status{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="card-title">Sentry Integration Status</h2>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-success">
+                        <h5><i class="fas fa-check-circle"></i> Sentry Integration Active</h5>
+                        <p>Your application is connected to Sentry for error tracking and bug reporting.</p>
+                    </div>
+                    
+                    <h4>Test Error Reporting</h4>
+                    <p>To test that error reporting is working correctly, you can:</p>
+                    <ul>
+                        <li>Visit <a href="{% url 'sentry_test' %}">/sentry-test/</a> - This will trigger a deliberate error (ZeroDivisionError)</li>
+                        <li>Check your <a href="https://sentry.io" target="_blank">Sentry Dashboard</a> to see if the error was captured</li>
+                    </ul>
+                    
+                    <div class="alert alert-info">
+                        <h5><i class="fas fa-info-circle"></i> What's Being Captured</h5>
+                        <p>When an error occurs, Sentry captures:</p>
+                        <ul>
+                            <li>Exception details and stack trace</li>
+                            <li>Request information (URL, headers, etc.)</li>
+                            <li>User context (if the user is logged in)</li>
+                            <li>Environment information (Django version, Python version, etc.)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="/" class="btn btn-primary">Back to Home</a>
+                    <a href="https://docs.sentry.io/platforms/python/guides/django/" class="btn btn-outline-secondary float-end" target="_blank">
+                        Sentry Documentation
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

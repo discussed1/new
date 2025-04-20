@@ -1,0 +1,10 @@
+{% comment %}
+  Redirects to the components location of notification_list.html
+  This is to maintain backward compatibility with existing imports
+{% endcomment %}
+
+{% include 'core/includes/components/notification_list.html' with 
+  notifications=notifications
+  show_pagination=show_pagination
+  empty_message=empty_message
+%}

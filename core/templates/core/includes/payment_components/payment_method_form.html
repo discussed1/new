@@ -1,0 +1,115 @@
+{% comment %}
+  Template for displaying a payment method selection form
+  
+  Parameters:
+  - cancel_url: The URL to redirect to if user cancels (optional, default: 'donate')
+  - submit_label: The label for the submit button (optional, default: "Proceed to Payment")
+  - cancel_label: The label for the cancel button (optional, default: "Cancel")
+  - show_test_note: Whether to show test mode instructions (optional, default: True)
+  - use_enhanced_ui: Whether to use enhanced payment method UI with cards (optional, default: False)
+  
+  Usage:
+  {% include 'core/includes/payment_method_form.html' with cancel_url='donate' %}
+{% endcomment %}
+
+{% load i18n %}
+
+<form method="post" class="mt-4" id="payment-method-form">
+    {% csrf_token %}
+    
+    {% if use_enhanced_ui %}
+    <!-- Enhanced UI with payment method cards -->
+    <div class="mb-3">
+        <label class="form-label fw-bold">Payment Method</label>
+        
+        <!-- Default test payment method -->
+        <div class="payment-method-option mb-3" id="payment-method-default">
+            {% with header_content %}
+                <div class="form-check">
+                    <input class="form-check-input payment-method-radio" type="radio" name="payment_variant" 
+                           id="default-method" value="default" checked>
+                    <label class="form-check-label fw-bold" for="default-method">
+                        <i class="bi bi-credit-card me-2"></i> Credit Card (Test Mode)
+                    </label>
+                </div>
+            {% endwith %}
+            
+            {% with body_content %}
+                {% if show_test_note|default:True %}
+                <div class="payment-method-details" id="default-details">
+                    <div class="alert alert-info">
+                        <small><i class="bi bi-info-circle me-1"></i> For testing, use credit card number <code>4242424242424242</code> with any future expiration date and any 3-digit CVC.</small>
+                    </div>
+                </div>
+                {% endif %}
+            {% endwith %}
+            
+            {% include 'core/includes/card_layout.html' with 
+                content=body_content 
+                header_class="bg-light"
+                card_class="" 
+                content_block_id=""
+                title=header_content %}
+        </div>
+        
+        <!-- Stripe payment method -->
+        {% include 'core/includes/payment_method_stripe.html' %}
+        
+        <!-- PayPal payment method -->
+        <div class="payment-method-option mb-3" id="payment-method-paypal">
+            {% with header_content %}
+                <div class="form-check">
+                    <input class="form-check-input payment-method-radio" type="radio" name="payment_variant" 
+                           id="paypal-method" value="paypal">
+                    <label class="form-check-label fw-bold" for="paypal-method">
+                        <i class="bi bi-paypal me-2"></i> Pay with PayPal
+                    </label>
+                </div>
+            {% endwith %}
+            
+            {% with body_content %}
+                <div class="payment-method-details" id="paypal-details">
+                    <div class="alert alert-info">
+                        <small><i class="bi bi-info-circle me-1"></i> You'll be redirected to PayPal to complete your payment securely.</small>
+                    </div>
+                </div>
+            {% endwith %}
+            
+            {% include 'core/includes/card_layout.html' with 
+                content=body_content 
+                header_class="bg-light"
+                card_class="" 
+                content_block_id=""
+                title=header_content %}
+        </div>
+    </div>
+    {% else %}
+    <!-- Simple dropdown UI -->
+    <div class="form-group mb-3">
+        <label class="form-label"><strong>Payment Method</strong></label>
+        <select name="payment_variant" class="form-select">
+            <option value="default" selected>Credit Card (Test Mode)</option>
+            <option value="paypal">PayPal</option>
+            <option value="stripe">Stripe</option>
+        </select>
+        {% if show_test_note|default:True %}
+        <div class="form-text">
+            <small class="text-muted">Note: For testing, select "Credit Card (Test Mode)" and use credit card number 4242424242424242</small>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+    
+    <div class="d-grid gap-2 mt-4">
+        <button type="submit" class="btn btn-success btn-lg">
+            {{ submit_label|default:"Proceed to Payment" }}
+        </button>
+        <a href="{% url cancel_url|default:'donate' %}" class="btn btn-outline-secondary">
+            {{ cancel_label|default:"Cancel" }}
+        </a>
+    </div>
+</form>
+
+{% if use_enhanced_ui %}
+<!-- Payment method visibility is handled by consolidated script.js -->
+{% endif %}

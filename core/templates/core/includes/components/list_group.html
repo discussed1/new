@@ -1,0 +1,27 @@
+{% comment %}
+Generic list group template for standardizing list groups across the application
+Parameters:
+- items: List of items to display (required)
+- empty_message: Message to display when there are no items (optional, default: "No items found.")
+- no_padding: Whether to remove padding from list group (optional, default: False)
+- list_group_class: Additional CSS classes for list group (optional)
+- item_template: Template to include for each item (required)
+- item_wrapper_class: Additional CSS classes for each item wrapper (optional, default: "list-group-item")
+{% endcomment %}
+
+{% if items %}
+    <div class="list-group list-group-flush {{ list_group_class }}">
+        {% for item in items %}
+            <div class="{{ item_wrapper_class|default:'list-group-item' }}">
+                {% include item_template with item=item %}
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="p-4 text-center">
+        <p class="mb-0">{{ empty_message|default:"No items found." }}</p>
+        {% if empty_action_url and empty_action_text %}
+            <a href="{{ empty_action_url }}" class="btn btn-primary mt-3">{{ empty_action_text }}</a>
+        {% endif %}
+    </div>
+{% endif %}

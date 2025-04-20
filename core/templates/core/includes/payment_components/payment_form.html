@@ -1,0 +1,64 @@
+{% comment %}
+Consolidated payment form template
+Parameters:
+- payment: The payment object to process
+- form: The form to render
+- process_url: URL for form submission (default is process_payment with payment.pk)
+- info_message: Optional message to display above the form
+{% endcomment %}
+
+<div class="alert alert-info mb-4">
+    <p class="mb-0">{{ info_message|default:"Please complete your payment information below." }}</p>
+</div>
+
+{% include 'core/includes/payment_summary.html' with payment=payment title="Payment Summary" show_method=True %}
+
+<div class="payment-form">
+    <h4>Payment Details</h4>
+    <form method="post" action="{% url process_url|default:'process_payment' payment.pk %}">
+        {% csrf_token %}
+        {{ form.media }}
+        
+        {% if payment.variant == 'default' %}
+        <!-- Test credit card fields for dummy provider -->
+        <div class="mb-3">
+            <label for="id_number" class="form-label">Card Number</label>
+            <input type="text" name="number" id="id_number" class="form-control" value="4242424242424242" required>
+            <div class="form-text">For testing, use 4242424242424242</div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label for="id_expiration" class="form-label">Expiration Date (MM/YY)</label>
+                    <input type="text" name="expiration" id="id_expiration" class="form-control" value="12/25" required>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label for="id_cvv2" class="form-label">CVV</label>
+                    <input type="text" name="cvv2" id="id_cvv2" class="form-control" value="123" required>
+                </div>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="id_name" class="form-label">Name on Card</label>
+            <input type="text" name="name" id="id_name" class="form-control" value="Test User" required>
+        </div>
+        
+        <!-- Add hidden fields for required BasePayment fields -->
+        <input type="hidden" name="status" value="waiting">
+        <input type="hidden" name="fraud_status" value="unknown">
+        <input type="hidden" name="gateway_response" value="{}">
+        
+        {% else %}
+        <!-- For other providers, show the form fields -->
+        {% for field in form %}
+            {% include 'core/includes/form_field.html' with field=field use_invalid_feedback=True %}
+        {% endfor %}
+        {% endif %}
+        
+        <div class="d-grid mt-4">
+            <button type="submit" class="btn btn-success btn-lg">Complete Payment</button>
+        </div>
+    </form>
+</div>

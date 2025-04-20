@@ -1,0 +1,24 @@
+{% load socialaccount %}
+
+{% get_providers as socialaccount_providers %}
+
+{% for provider in socialaccount_providers %}
+  {% if provider.id == "openid" %}
+    {% for brand in provider.get_brands %}
+    <li class="mb-2">
+      <a title="{{ brand.name }}" 
+         class="btn btn-outline-secondary d-block"
+         href="{% provider_login_url provider.id openid=brand.openid_url process=process %}">
+         <i class="fab fa-{{ brand.id|lower }}"></i> {{ brand.name }}
+      </a>
+    </li>
+    {% endfor %}
+  {% endif %}
+  <li class="mb-2">
+    <a title="{{ provider.name }}" 
+       class="btn btn-outline-secondary d-block"
+       href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}">
+       <i class="fab fa-{{ provider.id|lower }}"></i> {{ provider.name }}
+    </a>
+  </li>
+{% endfor %}

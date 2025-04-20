@@ -1,0 +1,36 @@
+{% comment %}
+  Template for displaying the vote buttons for a comment
+  
+  Parameters:
+  - comment: The comment to display vote buttons for (required)
+  - user_comment_votes: Dictionary of user's votes (optional)
+  
+  Usage:
+  {% include 'core/includes/comment_vote_buttons.html' with comment=comment %}
+{% endcomment %}
+
+{% load core_tags %}
+
+<div class="vote-buttons vote-buttons-comment" data-id="{{ comment.id }}" data-type="comment">
+    <button class="vote-button upvote-button {% dict_get user_comment_votes comment.id as user_vote %}{% if user_vote == 1 %}active{% endif %}" 
+            data-vote="up" 
+            data-id="{{ comment.id }}" 
+            data-type="comment" 
+            aria-label="Upvote"
+            title="Upvote this comment">
+        <i class="bi bi-arrow-up-circle-fill" aria-hidden="true"></i>
+    </button>
+    
+    <div class="vote-count" aria-live="polite" aria-atomic="true">
+        {{ comment.vote_count }}
+    </div>
+    
+    <button class="vote-button downvote-button {% if user_vote == -1 %}active{% endif %}" 
+            data-vote="down" 
+            data-id="{{ comment.id }}" 
+            data-type="comment" 
+            aria-label="Downvote"
+            title="Downvote this comment">
+        <i class="bi bi-arrow-down-circle-fill" aria-hidden="true"></i>
+    </button>
+</div>

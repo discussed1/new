@@ -1,0 +1,46 @@
+{% comment %}
+  Template for displaying post header with community, author and post metadata
+  
+  Parameters:
+  - post: The post to display header for (required)
+  - show_title: Whether to show the post title (default: True)
+  - title_class: CSS classes for the title (optional, default: h3 mb-3)
+  
+  Usage:
+  {% include 'core/includes/post_header.html' with post=post %}
+{% endcomment %}
+
+{% load core_tags %}
+
+<header>
+    <div class="post-meta small text-muted mb-2">
+        <a href="{% url 'community_detail' post.community.id %}" class="fw-bold text-decoration-none">
+            d/{{ post.community.name }}
+        </a>
+        <span class="mx-1">•</span>
+        <span>Posted by</span>
+        <a href="{% url 'profile' post.author.username %}" class="text-decoration-none">
+            <span>u/{{ post.author.username }}</span>
+            
+            {% if post.author.profile.country %}
+            <img src="{{ post.author.profile.country.flag }}" 
+                 alt="{{ post.author.profile.country.name }}" 
+                 class="country-flag" 
+                 style="width: 20px; height: 13px; vertical-align: middle;" />
+            {% endif %}
+            
+            {{ post.author.profile.karma|reputation_badge }}
+        </a>
+        <span class="mx-1">•</span>
+        <span>{{ post.created_at|timesince }} ago</span>
+    </div>
+    
+    {% if show_title|default:True %}
+    <h1 class="{{ title_class|default:'h3 mb-3' }}">
+        {% if post.post_type == 'link' %}
+            <i class="bi bi-link-45deg me-1 text-secondary" aria-hidden="true"></i>
+        {% endif %}
+        {{ post.title }}
+    </h1>
+    {% endif %}
+</header>

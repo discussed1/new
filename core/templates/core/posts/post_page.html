@@ -1,0 +1,252 @@
+{% extends 'core/base.html' %}
+
+{% block title %}
+{% if page_type == 'create' %}
+Create {{ post_type|title }} Post in d/{{ community.name }} | Discuss
+{% elif page_type == 'edit' %}
+Edit Post | Discuss
+{% else %}
+View Post | Discuss
+{% endif %}
+{% endblock %}
+
+{% block content %}
+{% if page_type == 'create' %}
+<!-- CREATE POST MODE -->
+<div class="card shadow">
+    <div class="card-header bg-primary text-white">
+        <h3 class="card-title mb-0">
+            Create a {{ post_type|title }} Post in d/{{ community.name }}
+        </h3>
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+                <label for="{{ form.title.id_for_label }}" class="form-label">Title</label>
+                {{ form.title.errors }}
+                <input type="text" name="{{ form.title.name }}" class="form-control {% if form.title.errors %}is-invalid{% endif %}" id="{{ form.title.id_for_label }}" required placeholder="Title">
+                {% if form.title.errors %}
+                    <div class="invalid-feedback">
+                        {{ form.title.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+            
+            {% if post_type == 'text' %}
+                <div class="mb-3">
+                    <label for="{{ form.content.id_for_label }}" class="form-label">Content</label>
+                    {{ form.content.errors }}
+                    <textarea name="{{ form.content.name }}" class="form-control {% if form.content.errors %}is-invalid{% endif %}" id="{{ form.content.id_for_label }}" rows="8" placeholder="Write your post content here..."></textarea>
+                    {% if form.content.errors %}
+                        <div class="invalid-feedback">
+                            {{ form.content.errors.0 }}
+                        </div>
+                    {% endif %}
+                </div>
+            {% else %}
+                <div class="mb-3">
+                    <label for="{{ form.url.id_for_label }}" class="form-label">URL</label>
+                    {{ form.url.errors }}
+                    <input type="url" name="{{ form.url.name }}" class="form-control {% if form.url.errors %}is-invalid{% endif %}" id="{{ form.url.id_for_label }}" required placeholder="https://">
+                    {% if form.url.errors %}
+                        <div class="invalid-feedback">
+                            {{ form.url.errors.0 }}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+            
+            <div class="mb-3">
+                <label for="{{ form.tags.id_for_label }}" class="form-label">Tags</label>
+                {{ form.tags.errors }}
+                <input type="text" name="{{ form.tags.name }}" class="form-control {% if form.tags.errors %}is-invalid{% endif %}" id="{{ form.tags.id_for_label }}" value="news" placeholder="Tags (comma separated)">
+                <div class="form-text">Add relevant tags separated by commas (e.g., news, tech, politics)</div>
+                {% if form.tags.errors %}
+                    <div class="invalid-feedback">
+                        {{ form.tags.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">Post</button>
+                <a href="{% url 'community_detail' community.id %}" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% elif page_type == 'edit' %}
+<!-- EDIT POST MODE - placeholder for future implementation -->
+<div class="card shadow">
+    <div class="card-header bg-primary text-white">
+        <h3 class="card-title mb-0">
+            Edit Post
+        </h3>
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+                <label for="{{ form.title.id_for_label }}" class="form-label">Title</label>
+                {{ form.title.errors }}
+                <input type="text" name="{{ form.title.name }}" value="{{ form.title.value }}" class="form-control {% if form.title.errors %}is-invalid{% endif %}" id="{{ form.title.id_for_label }}" required>
+                {% if form.title.errors %}
+                    <div class="invalid-feedback">
+                        {{ form.title.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+            
+            {% if post.post_type == 'text' %}
+                <div class="mb-3">
+                    <label for="{{ form.content.id_for_label }}" class="form-label">Content</label>
+                    {{ form.content.errors }}
+                    <textarea name="{{ form.content.name }}" class="form-control {% if form.content.errors %}is-invalid{% endif %}" id="{{ form.content.id_for_label }}" rows="8">{{ form.content.value }}</textarea>
+                    {% if form.content.errors %}
+                        <div class="invalid-feedback">
+                            {{ form.content.errors.0 }}
+                        </div>
+                    {% endif %}
+                </div>
+            {% else %}
+                <div class="mb-3">
+                    <label for="{{ form.url.id_for_label }}" class="form-label">URL</label>
+                    {{ form.url.errors }}
+                    <input type="url" name="{{ form.url.name }}" value="{{ form.url.value }}" class="form-control {% if form.url.errors %}is-invalid{% endif %}" id="{{ form.url.id_for_label }}" required>
+                    {% if form.url.errors %}
+                        <div class="invalid-feedback">
+                            {{ form.url.errors.0 }}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+            
+            <div class="mb-3">
+                <label for="{{ form.tags.id_for_label }}" class="form-label">Tags</label>
+                {{ form.tags.errors }}
+                <input type="text" name="{{ form.tags.name }}" value="{{ form.tags.value }}" class="form-control {% if form.tags.errors %}is-invalid{% endif %}" id="{{ form.tags.id_for_label }}" placeholder="Tags (comma separated)">
+                <div class="form-text">Add relevant tags separated by commas (e.g., news, tech, politics)</div>
+                {% if form.tags.errors %}
+                    <div class="invalid-feedback">
+                        {{ form.tags.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a href="{% url 'post_detail' post.id %}" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% else %}
+<!-- VIEW POST MODE - placeholder for future implementation -->
+<div class="card mb-4">
+    <div class="card-body">
+        <h3>{{ post.title }}</h3>
+        <!-- Post content would go here -->
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block sidebar %}
+{% if page_type == 'create' %}
+<!-- CREATE POST SIDEBAR -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="card-title mb-0">Posting in d/{{ community.name }}</h5>
+    </div>
+    <div class="card-body">
+        <p>You are creating a new {{ post_type }} post in the community <strong>d/{{ community.name }}</strong>.</p>
+        
+        {% if post_type == 'text' %}
+            <h6>Text Post Tips</h6>
+            <ul>
+                <li>Use a clear, descriptive title</li>
+                <li>Format your content for readability</li>
+                <li>Provide enough context in your post</li>
+                <li>Stay on topic for this community</li>
+            </ul>
+        {% else %}
+            <h6>Link Post Tips</h6>
+            <ul>
+                <li>Use the original title or a descriptive one</li>
+                <li>Check if the link has been posted before</li>
+                <li>Make sure the link is relevant to this community</li>
+                <li>Consider adding context in the comments</li>
+            </ul>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="card-title mb-0">Post Type</h5>
+    </div>
+    <div class="card-body">
+        <div class="d-flex justify-content-between">
+            <a href="{% url 'create_text_post' community.id %}" class="btn btn-{% if post_type == 'text' %}primary{% else %}outline-primary{% endif %} flex-grow-1 me-2">
+                <i class="bi bi-file-text me-1"></i> Text
+            </a>
+            <a href="{% url 'create_link_post' community.id %}" class="btn btn-{% if post_type == 'link' %}primary{% else %}outline-primary{% endif %} flex-grow-1">
+                <i class="bi bi-link-45deg me-1"></i> Link
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h5 class="card-title mb-0">About the Community</h5>
+    </div>
+    <div class="card-body">
+        <p class="mb-0">{{ community.description }}</p>
+    </div>
+</div>
+{% elif page_type == 'edit' %}
+<!-- EDIT POST SIDEBAR -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="card-title mb-0">Editing Post</h5>
+    </div>
+    <div class="card-body">
+        <p>You are editing your post in <strong>d/{{ post.community.name }}</strong>.</p>
+        
+        <h6>Editing Tips</h6>
+        <ul>
+            <li>Maintain the original meaning of your post</li>
+            <li>Add clarity or context if needed</li>
+            <li>Fix any errors or typos</li>
+            <li>Consider marking your edits with "Edit:" at the bottom</li>
+        </ul>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h5 class="card-title mb-0">Community Rules</h5>
+    </div>
+    <div class="card-body">
+        <p class="mb-0">Remember to follow the community guidelines of <strong>d/{{ post.community.name }}</strong> when editing your post.</p>
+    </div>
+</div>
+{% else %}
+<!-- VIEW POST SIDEBAR -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="card-title mb-0">About d/{{ post.community.name }}</h5>
+    </div>
+    <div class="card-body">
+        <p>{{ post.community.description }}</p>
+        <div class="d-grid">
+            <a href="{% url 'community_detail' post.community.id %}" class="btn btn-outline-primary">View Community</a>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

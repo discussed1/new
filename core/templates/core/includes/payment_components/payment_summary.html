@@ -1,0 +1,125 @@
+{% comment %}
+  Template for displaying payment summary information
+  
+  Parameters:
+  - payment: The payment object with details (required)
+  - title: The summary title (default: "Payment Summary")
+  - include_description: Boolean to show description if available (default: True)
+  - show_method: Show payment method (default: False)
+  - show_date: Show payment date (default: False)
+  - show_transaction: Show transaction ID (default: False)
+  - show_id: Show payment ID (default: False)
+  - show_status: Show payment status (default: False)
+  - table_class: Additional classes for the table (default: "table-bordered")
+  - card_class: Additional classes for the container (default: "mb-4")
+  - use_card: Whether to use card layout (default: False)
+  
+  Usage:
+  {% include 'core/includes/payment_summary.html' with payment=payment %}
+{% endcomment %}
+
+{% if use_card %}
+    <!-- Card layout version - create table first -->
+    {% with table_content=payment.id %}
+    <!-- We're just using payment.id to initialize the variable -->
+    {% with table_content %}
+    <table class="table {{ table_class|default:'table-bordered' }}">
+        {% if payment.id and show_id %}
+        <tr>
+            <th>Payment ID:</th>
+            <td>{{ payment.id }}</td>
+        </tr>
+        {% endif %}
+        <tr>
+            <th>Amount:</th>
+            <td>${{ payment.total|floatformat:2 }} USD</td>
+        </tr>
+        {% if payment.variant and show_method %}
+        <tr>
+            <th>Payment Method:</th>
+            <td>{{ payment.variant|title }}</td>
+        </tr>
+        {% endif %}
+        {% if payment.created_at and show_date %}
+        <tr>
+            <th>Date:</th>
+            <td>{{ payment.created_at|date }}</td>
+        </tr>
+        {% endif %}
+        {% if payment.description and include_description %}
+        <tr>
+            <th>Message:</th>
+            <td>{{ payment.description }}</td>
+        </tr>
+        {% endif %}
+        {% if payment.status and show_status %}
+        <tr>
+            <th>Status:</th>
+            <td>{% include 'core/includes/payment_status_badge.html' with status=payment.status %}</td>
+        </tr>
+        {% endif %}
+        {% if payment.transaction_id and show_transaction %}
+        <tr>
+            <th>Transaction ID:</th>
+            <td><small class="text-muted">{{ payment.transaction_id }}</small></td>
+        </tr>
+        {% endif %}
+    </table>
+    {% endwith %}
+    
+    <!-- Now wrap it in card layout -->
+    <div class="card {{ card_class|default:'mb-4' }}">
+        <div class="card-header {{ header_class|default:'bg-light' }}">
+            <h5 class="card-title mb-0">{{ title|default:"Payment Summary" }}</h5>
+        </div>
+        <div class="card-body">
+            {{ table_content }}
+        </div>
+    </div>
+    {% endwith %}
+{% else %}
+    <!-- Plain version -->
+    <h4>{{ title|default:"Payment Summary" }}</h4>
+    <table class="table {% if table_class %}{{ table_class }}{% else %}table-bordered{% endif %}">
+        {% if payment.id and show_id %}
+        <tr>
+            <th>Payment ID:</th>
+            <td>{{ payment.id }}</td>
+        </tr>
+        {% endif %}
+        <tr>
+            <th>Amount:</th>
+            <td>${{ payment.total|floatformat:2 }} USD</td>
+        </tr>
+        {% if payment.variant and show_method %}
+        <tr>
+            <th>Payment Method:</th>
+            <td>{{ payment.variant|title }}</td>
+        </tr>
+        {% endif %}
+        {% if payment.created_at and show_date %}
+        <tr>
+            <th>Date:</th>
+            <td>{{ payment.created_at|date }}</td>
+        </tr>
+        {% endif %}
+        {% if payment.description and include_description %}
+        <tr>
+            <th>Message:</th>
+            <td>{{ payment.description }}</td>
+        </tr>
+        {% endif %}
+        {% if payment.status and show_status %}
+        <tr>
+            <th>Status:</th>
+            <td>{% include 'core/includes/payment_status_badge.html' with status=payment.status %}</td>
+        </tr>
+        {% endif %}
+        {% if payment.transaction_id and show_transaction %}
+        <tr>
+            <th>Transaction ID:</th>
+            <td><small class="text-muted">{{ payment.transaction_id }}</small></td>
+        </tr>
+        {% endif %}
+    </table>
+{% endif %}

@@ -1,0 +1,37 @@
+{% comment %}
+  Template for displaying post content (text or link)
+  
+  Parameters:
+  - post: The post to display content for (required)
+  - show_link_preview: Whether to show the link preview (default: True)
+  - truncate: Whether to truncate the content (default: False)
+  - word_limit: Number of words to show if truncated (default: 50)
+  
+  Usage:
+  {% include 'core/includes/posts/post_content.html' with post=post %}
+{% endcomment %}
+
+{% if post.post_type == 'link' and show_link_preview|default:True %}
+    <div class="post-url mb-3">
+        <a href="{{ post.url }}" class="btn btn-outline-primary" target="_blank" rel="noopener">
+            <i class="bi bi-box-arrow-up-right me-1" aria-hidden="true"></i>
+            Visit Link
+            <span class="sr-only">(opens in a new tab)</span>
+        </a>
+        <span class="ms-2 text-muted d-none d-sm-inline-block">{{ post.url }}</span>
+    </div>
+{% endif %}
+
+{% if post.content %}
+    <div class="post-content mb-3">
+        {% if truncate %}
+            {% load core_tags %}
+            {{ post.content|truncatewords_html:word_limit|linebreaks }}
+            {% if post.content|wordcount > word_limit %}
+                <a href="{% url 'post_detail' post.id %}" class="read-more">Read more...</a>
+            {% endif %}
+        {% else %}
+            {{ post.content|linebreaks }}
+        {% endif %}
+    </div>
+{% endif %}

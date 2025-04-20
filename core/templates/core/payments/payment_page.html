@@ -1,0 +1,47 @@
+{% extends 'core/base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{{ title|default:"Payment" }}{% endblock %}
+
+{% block content %}
+{% with content_block='' %}
+    {% if page_type == 'form' %}
+        <p class="lead">Your donations help us keep the lights on and improve the platform for everyone.</p>
+        {% include 'core/includes/donation_form.html' with form=form messages=messages %}
+    {% elif page_type == 'confirmation' %}
+        <div class="alert alert-info">
+            <p class="mb-0">Please review your donation details before proceeding to payment.</p>
+        </div>
+        
+        {% include 'core/includes/payment_summary.html' with payment=payment title="Donation Summary" show_date=True table_class="table" %}
+        
+        {% include 'core/includes/payment_method_form.html' with cancel_url='donate' use_enhanced_ui=True %}
+    {% elif page_type == 'history' %}
+        {% include 'core/includes/donation_history_content.html' with payments=payments %}
+    {% elif page_type == 'process' %}
+        {% include 'core/includes/payment_form.html' with payment=payment form=form %}
+    {% elif page_type == 'result' %}
+        {% include 'core/includes/payment_result.html' with 
+            success=success 
+            title=result_title|default:success|yesno:"Thank You for Your Support!,Payment Unsuccessful" 
+            message=message|default:success|yesno:"Your donation has been received,There was a problem processing your payment"
+            payment=payment
+            error_reason=error_reason
+            payment_details=payment_details
+            action_primary_link=action_primary_link|default:success|yesno:"home,donate"
+            action_primary_text=action_primary_text|default:success|yesno:"Return to Home,Try Again"
+            action_primary_icon=action_primary_icon|default:success|yesno:"bi bi-house,bi bi-arrow-repeat"
+            action_primary_class=action_primary_class|default:"btn-primary"
+            action_secondary_link=action_secondary_link|default:success|yesno:"donation_history,home"
+            action_secondary_text=action_secondary_text|default:success|yesno:"View Donation History,Return to Home"
+            action_secondary_icon=action_secondary_icon|default:success|yesno:"bi bi-clock-history,bi bi-house" %}
+    {% endif %}
+{% endwith %}
+
+{% include 'core/includes/payment_layout.html' with 
+    title=title|default:"Payment"
+    content=content_block 
+    footer_message=footer_message|default:"Payments are secure and processed via our payment provider."
+    container_class=container_class|default:"" %}
+{% endblock %}

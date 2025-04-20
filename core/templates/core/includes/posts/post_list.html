@@ -1,0 +1,44 @@
+{% load el_pagination_tags core_tags %}
+
+{% paginate post_list %}
+{% for post in post_list %}
+<article class="card mb-3 post-card post-item" id="post-{{ post.id }}">
+    <div class="card-body p-2">
+        <div class="d-flex">
+            {% include 'core/includes/posts/post_vote_buttons.html' with post=post user_post_votes=user_post_votes hashtag="post-"|add:post.id|stringformat:"s" %}
+            
+            <!-- Content section -->
+            <div class="post-content flex-grow-1">
+                {% include 'core/includes/posts/post_header.html' with post=post prefix_community=True %}
+                
+                {% include 'core/includes/posts/post_content.html' with post=post truncate=True word_limit=50 %}
+                
+                <div class="post-actions small mt-2">
+                    <a href="{% url 'post_detail' post.id %}" class="btn btn-sm btn-outline-primary me-2" aria-label="View comments">
+                        <i class="bi bi-chat-text" aria-hidden="true"></i> {{ post.comments.count }} comment{{ post.comments.count|pluralize }}
+                    </a>
+                    
+                    {% include 'core/includes/components/social_share_buttons.html' with post=post request=request %}
+                    
+                    {% if user.is_authenticated and user == post.author %}
+                    <a href="{% url 'delete_post' post.id %}" 
+                       class="btn btn-sm btn-outline-danger me-2" 
+                       onclick="return confirm('Are you sure you want to delete this post?')"
+                       aria-label="Delete post">
+                        <i class="bi bi-trash" aria-hidden="true"></i> Delete
+                    </a>
+                    {% endif %}
+                    
+                    {% include 'core/includes/posts/post_tags.html' with post=post %}
+                </div>
+            </div>
+        </div>
+    </div>
+</article>
+{% empty %}
+<div class="alert alert-info mt-3" role="alert">
+    <p class="mb-0">No posts found.</p>
+</div>
+{% endfor %}
+
+{% include 'core/includes/components/pagination.html' with page_obj=page_obj is_paginated=is_paginated paginator=paginator object_list=object_list %}

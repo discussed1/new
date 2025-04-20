@@ -1,0 +1,10 @@
+{% comment %}
+  Redirects to the payment_components location of payments_table.html
+  This is to maintain backward compatibility with existing imports
+{% endcomment %}
+
+{% include 'core/includes/payment_components/payments_table.html' with 
+  payments=payments 
+  empty_text=empty_text 
+  classes=classes
+%}

@@ -1,0 +1,11 @@
+{% comment %}
+  Redirects to the payment_components location of payment_layout.html
+  This is to maintain backward compatibility with existing imports
+{% endcomment %}
+
+{% include 'core/includes/payment_components/payment_layout.html' with 
+  title=title
+  content=content
+  footer_message=footer_message
+  container_class=container_class
+%}

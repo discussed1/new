@@ -1,0 +1,31 @@
+{% comment %}
+  Template for displaying a conversation thread of messages
+  
+  Parameters:
+  - thread_messages: The list of messages in the thread (required)
+  - user: The current user (required)
+  
+  Usage:
+  {# Removed circular reference to message_thread.html #}
+{% endcomment %}
+
+{% load i18n %}
+{% load core_tags %}
+
+{% if thread_messages %}
+<div class="message-thread mt-4">
+    <h5 class="mb-3">{% trans "Conversation" %}</h5>
+    
+    {% for thread_message in thread_messages %}
+    <div class="thread-message mb-3 p-3 {% if thread_message.sender == user %}bg-light text-end{% else %}bg-info bg-opacity-10{% endif %} rounded">
+        <div class="thread-message-meta mb-2 small text-muted">
+            <span class="fw-bold">{{ thread_message.sender|or_me:user }}</span> - 
+            <span>{{ thread_message.sent_at|date:"SHORT_DATETIME_FORMAT" }}</span>
+        </div>
+        <div class="thread-message-body">
+            {{ thread_message.body|linebreaksbr }}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}

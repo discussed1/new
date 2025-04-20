@@ -1,0 +1,468 @@
+{% extends 'core/base.html' %}
+{% load core_tags %}
+
+{% block title %}
+{% if page_type == 'view' %}
+{{ profile_user.username }} - Profile | Discuss
+{% else %}
+Edit Profile | Discuss
+{% endif %}
+{% endblock %}
+
+{% block content %}
+{% if page_type == 'view' %}
+<!-- PROFILE VIEW MODE -->
+<div class="profile-header card mb-4">
+    <div class="card-body">
+        <div class="d-flex align-items-start">
+            <div class="profile-avatar me-4 text-center">
+                {% if profile_user.profile.avatar %}
+                    <img src="{{ profile_user.profile.avatar.url }}" class="rounded-circle" alt="{{ profile_user.username }}'s avatar" width="128" height="128">
+                {% else %}
+                    <div class="avatar-placeholder rounded-circle d-flex align-items-center justify-content-center bg-light" style="width: 128px; height: 128px;">
+                        <span class="display-4 text-secondary">{{ profile_user.username|first|upper }}</span>
+                    </div>
+                {% endif %}
+                <div class="user-reputation mt-2">
+                    <span class="badge bg-primary">{{ reputation_level }}</span>
+                </div>
+            </div>
+            <div class="profile-info flex-grow-1">
+                <h3 class="mb-1">
+                    {% if profile_user.profile.display_name %}
+                        {{ profile_user.profile.display_name }}
+                        <small class="text-muted">u/{{ profile_user.username }}</small>
+                    {% else %}
+                        u/{{ profile_user.username }}
+                    {% endif %}
+                </h3>
+                <div class="d-flex align-items-center mb-2">
+                    <span class="me-2">{{ profile_user.profile.karma|reputation_badge }} {{ profile_user.profile.karma }} reputation</span>
+                </div>
+                
+                <div class="user-details mb-3">
+                    <p class="text-muted mb-2">
+                        <i class="bi bi-calendar me-1"></i> Member since {{ profile_user.date_joined|date:"F j, Y" }}
+                        {% if profile_user.profile.country %}
+                            <span class="mx-2">|</span>
+                            <i class="bi bi-globe me-1"></i> 
+                            <img src="{{ profile_user.profile.country.flag }}" alt="{{ profile_user.profile.country.code }}" class="country-flag me-1" style="width: 16px; height: 12px;" /> 
+                            {{ profile_user.profile.country.name }}
+                        {% endif %}
+                        {% if profile_user.profile.website %}
+                            <span class="mx-2">|</span>
+                            <i class="bi bi-link-45deg me-1"></i> 
+                            <a href="{{ profile_user.profile.website }}" target="_blank" rel="noopener noreferrer">
+                                {{ profile_user.profile.website|urlize }}
+                            </a>
+                        {% endif %}
+                    </p>
+                    
+                    {% if profile_user.profile.bio %}
+                        <div class="bio-section p-2 bg-light rounded mb-2">
+                            <p class="mb-0">{{ profile_user.profile.bio }}</p>
+                        </div>
+                    {% endif %}
+                    
+                    {% if profile_user.profile.interests.all %}
+                        <div class="interests-section">
+                            <small class="text-muted d-block mb-1">Interests:</small>
+                            {% for interest in profile_user.profile.interests.all %}
+                                <a href="/?tag={{ interest.slug }}" class="badge bg-light text-dark text-decoration-none me-1 mb-1">
+                                    <i class="bi bi-tag-fill me-1" aria-hidden="true"></i>{{ interest.name }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Reputation Progress Bar -->
+                <div class="mt-2">
+                    <div class="reputation-progress">
+                        <div class="reputation-progress-bar" style="width: {{ reputation_progress }}%"></div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">{{ reputation_level }}</small>
+                        <small class="text-muted">
+                            {% with next_level=False %}
+                                {% for level in profile_user.profile.REPUTATION_LEVELS %}
+                                    {% if level.0 > profile_user.profile.karma and not next_level %}
+                                        {{ level.0 }} points
+                                        {% with next_level=True %}{% endwith %}
+                                    {% endif %}
+                                {% endfor %}
+                                {% if not next_level %}
+                                    Max level
+                                {% endif %}
+                            {% endwith %}
+                        </small>
+                    </div>
+                </div>
+            </div>
+            
+            {% if user == profile_user %}
+                <div class="ms-auto">
+                    <a href="{% url 'edit_profile' %}" class="btn btn-primary">
+                        <i class="bi bi-pencil-square me-1"></i> Edit Profile
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- User's Communities -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="card-title mb-0">Communities ({{ communities_count }})</h5>
+    </div>
+    <div class="card-body p-0">
+        {% if communities %}
+            <ul class="list-group list-group-flush">
+                {% for community in communities %}
+                    <li class="list-group-item">
+                        <a href="{% url 'community_detail' community.id %}" class="text-decoration-none">
+                            <i class="bi bi-people-fill me-2 text-primary"></i>
+                            d/{{ community.name }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="p-3">
+                <p class="mb-0">{{ profile_user.username }} hasn't joined any communities yet.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Tabs for Posts and Comments -->
+<div class="card">
+    <div class="card-header bg-light p-0">
+        <ul class="nav nav-tabs card-header-tabs" id="profileTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="posts-tab" data-bs-toggle="tab" data-bs-target="#posts" type="button" role="tab" aria-controls="posts" aria-selected="true">
+                    Posts ({{ posts_count }})
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="comments-tab" data-bs-toggle="tab" data-bs-target="#comments" type="button" role="tab" aria-controls="comments" aria-selected="false">
+                    Comments ({{ comments_count }})
+                </button>
+            </li>
+        </ul>
+    </div>
+    <div class="card-body p-0">
+        <div class="tab-content" id="profileTabsContent">
+            <!-- Posts Tab -->
+            <div class="tab-pane fade show active" id="posts" role="tabpanel" aria-labelledby="posts-tab">
+                {% if posts %}
+                    <div class="list-group list-group-flush">
+                        {% for post in posts %}
+                            <div class="list-group-item p-3">
+                                <div class="d-flex">
+                                    <div class="vote-column text-center me-3">
+                                        <div class="vote-count fw-bold">{{ post.vote_count }}</div>
+                                    </div>
+                                    
+                                    <div class="post-content">
+                                        <div class="post-meta small text-muted mb-2">
+                                            <a href="{% url 'community_detail' post.community.id %}" class="fw-bold text-decoration-none">d/{{ post.community.name }}</a>
+                                            <span class="mx-1">•</span>
+                                            {{ post.created_at|timesince }} ago
+                                        </div>
+                                        
+                                        <h5 class="mb-1">
+                                            {% if post.post_type == 'link' %}
+                                                <i class="bi bi-link-45deg me-1 text-secondary"></i>
+                                            {% endif %}
+                                            <a href="{% url 'post_detail' post.id %}" class="text-decoration-none">{{ post.title }}</a>
+                                        </h5>
+                                        
+                                        {% if post.post_type == 'link' %}
+                                            <div class="post-url">
+                                                <a href="{{ post.url }}" class="small text-muted text-decoration-none" target="_blank">
+                                                    {{ post.url|truncatechars:50 }}
+                                                    <i class="bi bi-box-arrow-up-right ms-1"></i>
+                                                </a>
+                                            </div>
+                                        {% elif post.content %}
+                                            <div class="post-content">
+                                                <p class="mb-1">{{ post.content|truncatewords:30 }}</p>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="p-4 text-center">
+                        <p class="mb-0">{{ profile_user.username }} hasn't made any posts yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Comments Tab -->
+            <div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="comments-tab">
+                {% if comments %}
+                    <div class="list-group list-group-flush">
+                        {% for comment in comments %}
+                            <div class="list-group-item p-3">
+                                <div class="comment-meta small text-muted mb-2">
+                                    <a href="{% url 'post_detail' comment.post.id %}" class="fw-bold text-decoration-none">
+                                        {{ comment.post.title|truncatechars:60 }}
+                                    </a>
+                                    <span class="mx-1">•</span>
+                                    <a href="{% url 'community_detail' comment.post.community.id %}" class="text-decoration-none">
+                                        d/{{ comment.post.community.name }}
+                                    </a>
+                                    <span class="mx-1">•</span>
+                                    {{ comment.created_at|timesince }} ago
+                                </div>
+                                
+                                <div class="comment-content">
+                                    <p class="mb-0">{{ comment.content }}</p>
+                                </div>
+                                
+                                <div class="comment-actions mt-2">
+                                    <a href="{% url 'post_detail' comment.post.id %}" class="btn btn-sm btn-outline-primary">
+                                        View Context
+                                    </a>
+                                    <span class="ms-2 text-muted">
+                                        <i class="bi bi-arrow-up-circle me-1"></i>
+                                        {{ comment.vote_count }} points
+                                    </span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="p-4 text-center">
+                        <p class="mb-0">{{ profile_user.username }} hasn't made any comments yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<!-- PROFILE EDIT MODE -->
+<div class="card shadow mb-4">
+    <div class="card-header bg-primary text-white">
+        <h3 class="card-title mb-0">Edit Profile</h3>
+    </div>
+    <div class="card-body">
+        <!-- Avatar Section -->
+        <div class="row mb-4">
+            <div class="col-md-3 text-center">
+                <div class="mb-2">
+                    {% if user.profile.avatar %}
+                        <img src="{{ user.profile.avatar.url }}" class="rounded-circle" alt="{{ user.username }}'s avatar" width="150" height="150">
+                    {% else %}
+                        <div class="avatar-placeholder rounded-circle d-flex align-items-center justify-content-center bg-light" style="width: 150px; height: 150px;">
+                            <span class="display-4 text-secondary">{{ user.username|first|upper }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-9">
+                <h5>Profile Information</h5>
+                <hr>
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ u_form.username.id_for_label }}" class="form-label">Username</label>
+                        {{ u_form.username.errors }}
+                        <input type="text" name="{{ u_form.username.name }}" value="{{ u_form.username.value }}" class="form-control {% if u_form.username.errors %}is-invalid{% endif %}" id="{{ u_form.username.id_for_label }}" required>
+                        {% if u_form.username.errors %}
+                            <div class="invalid-feedback">
+                                {{ u_form.username.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ u_form.email.id_for_label }}" class="form-label">Email</label>
+                        {{ u_form.email.errors }}
+                        <input type="email" name="{{ u_form.email.name }}" value="{{ u_form.email.value }}" class="form-control {% if u_form.email.errors %}is-invalid{% endif %}" id="{{ u_form.email.id_for_label }}" required>
+                        {% if u_form.email.errors %}
+                            <div class="invalid-feedback">
+                                {{ u_form.email.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ p_form.avatar.id_for_label }}" class="form-label">Profile Picture</label>
+                        {{ p_form.avatar.errors }}
+                        {{ p_form.avatar }}
+                        {% if p_form.avatar.errors %}
+                            <div class="invalid-feedback">
+                                {{ p_form.avatar.errors.0 }}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">
+                            <small>Upload a profile picture (max size: 2MB)</small>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ p_form.display_name.id_for_label }}" class="form-label">Display Name (optional)</label>
+                        {{ p_form.display_name.errors }}
+                        <input type="text" name="{{ p_form.display_name.name }}" value="{{ p_form.display_name.value|default_if_none:'' }}" class="form-control {% if p_form.display_name.errors %}is-invalid{% endif %}" id="{{ p_form.display_name.id_for_label }}">
+                        {% if p_form.display_name.errors %}
+                            <div class="invalid-feedback">
+                                {{ p_form.display_name.errors.0 }}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">
+                            <small>How your name will appear to others</small>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ p_form.bio.id_for_label }}" class="form-label">Bio</label>
+                        {{ p_form.bio.errors }}
+                        <textarea name="{{ p_form.bio.name }}" class="form-control {% if p_form.bio.errors %}is-invalid{% endif %}" id="{{ p_form.bio.id_for_label }}" rows="3">{{ p_form.bio.value }}</textarea>
+                        {% if p_form.bio.errors %}
+                            <div class="invalid-feedback">
+                                {{ p_form.bio.errors.0 }}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">
+                            <small>Tell the community about yourself</small>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ p_form.country.id_for_label }}" class="form-label">Country (optional)</label>
+                        {{ p_form.country.errors }}
+                        {{ p_form.country }}
+                        {% if p_form.country.errors %}
+                            <div class="invalid-feedback">
+                                {{ p_form.country.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ p_form.website.id_for_label }}" class="form-label">Website (optional)</label>
+                        {{ p_form.website.errors }}
+                        <input type="url" name="{{ p_form.website.name }}" value="{{ p_form.website.value|default_if_none:'' }}" class="form-control {% if p_form.website.errors %}is-invalid{% endif %}" id="{{ p_form.website.id_for_label }}">
+                        {% if p_form.website.errors %}
+                            <div class="invalid-feedback">
+                                {{ p_form.website.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ p_form.interests.id_for_label }}" class="form-label">Interests (optional)</label>
+                        {{ p_form.interests.errors }}
+                        <input type="text" name="{{ p_form.interests.name }}" value="{{ p_form.interests.value|default_if_none:'' }}" class="form-control {% if p_form.interests.errors %}is-invalid{% endif %}" id="{{ p_form.interests.id_for_label }}">
+                        {% if p_form.interests.errors %}
+                            <div class="invalid-feedback">
+                                {{ p_form.interests.errors.0 }}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">
+                            <small>Enter topics you're interested in, separated by commas</small>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <a href="{% url 'profile' user.username %}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block sidebar %}
+{% if page_type == 'view' %}
+<!-- PROFILE VIEW SIDEBAR -->
+{% if user.is_authenticated and user == profile_user %}
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="card-title mb-0">My Account</h5>
+        </div>
+        <div class="list-group list-group-flush">
+            <a href="{% url 'edit_profile' %}" class="list-group-item list-group-item-action">
+                <i class="bi bi-pencil-square me-2"></i> Edit Profile
+            </a>
+            <a href="{% url 'create_community' %}" class="list-group-item list-group-item-action">
+                <i class="bi bi-plus-circle-fill me-2"></i> Create a Community
+            </a>
+        </div>
+    </div>
+{% endif %}
+
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h5 class="card-title mb-0">User Statistics</h5>
+    </div>
+    <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                Posts
+                <span class="badge bg-primary rounded-pill">{{ posts_count }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                Comments
+                <span class="badge bg-primary rounded-pill">{{ comments_count }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                Communities
+                <span class="badge bg-primary rounded-pill">{{ communities_count }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                Reputation
+                <span>{{ profile_user.profile.karma|reputation_badge }} {{ profile_user.profile.karma }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                Member Since
+                <span class="text-muted">{{ profile_user.date_joined|date:"M Y" }}</span>
+            </li>
+        </ul>
+    </div>
+</div>
+
+{% else %}
+<!-- PROFILE EDIT SIDEBAR -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="card-title mb-0">Profile Tips</h5>
+    </div>
+    <div class="card-body">
+        <p>Your profile helps other users get to know you.</p>
+        <ul>
+            <li>Upload a custom avatar to stand out</li>
+            <li>Add your interests to find like-minded users</li>
+            <li>Include your country to connect with local users</li>
+            <li>Complete profiles receive more engagement</li>
+        </ul>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h5 class="card-title mb-0">Avatar Options</h5>
+    </div>
+    <div class="card-body">
+        <p>Customize how you appear to the community:</p>
+        <div class="list-group">
+            <div class="list-group-item">
+                <i class="bi bi-image me-2"></i> Upload a new avatar from the profile form
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

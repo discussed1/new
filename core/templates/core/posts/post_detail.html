@@ -1,0 +1,73 @@
+{% extends 'core/base.html' %}
+{% load core_tags %}
+{% load mptt_tags %}
+{% load static %}
+
+{% block title %}{{ post.title }} | Discuss{% endblock %}
+
+{% block extra_css %}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Post Details -->
+    <article class="card mb-4 post-item">
+        <div class="card-body p-2">
+            <div class="d-flex post-item">
+                <!-- Voting -->
+                <div class="me-3">
+                    {% include 'core/includes/posts/post_vote_buttons.html' with post=post user_post_vote=user_post_vote %}
+                </div>
+                
+                <!-- Post Content -->
+                <div class="post-content flex-grow-1">
+                    {% include 'core/includes/posts/post_header.html' with post=post %}
+                    
+                    {% include 'core/includes/posts/post_content.html' with post=post %}
+                    
+                    {% include 'core/includes/posts/post_tags.html' with post=post %}
+                    
+                    <div class="post-actions d-flex flex-wrap mt-3">
+                        {% if user.is_authenticated %}
+                            <button class="btn btn-outline-primary btn-sm me-2 mb-2 action-btn comment-btn" 
+                                    onclick="document.getElementById('content_id_content') && document.getElementById('content_id_content').focus()"
+                                    aria-label="Add a comment">
+                                <i class="bi bi-chat-text me-1" aria-hidden="true"></i> Comment
+                            </button>
+                        {% else %}
+                            <a href="{% url 'account_login' %}" class="btn btn-outline-primary btn-sm me-2 mb-2 action-btn comment-btn" aria-label="Login to comment">
+                                <i class="bi bi-chat-text me-1" aria-hidden="true"></i> Login to Comment
+                            </a>
+                        {% endif %}
+                        
+                        {% include 'core/includes/components/social_share_buttons.html' with post=post request=request %}
+                        
+                        {% if user == post.author %}
+                            <a href="{% url 'delete_post' post.id %}" 
+                               class="btn btn-outline-danger btn-sm mb-2 action-btn delete-btn" 
+                               onclick="return confirm('Are you sure you want to delete this post?')"
+                               aria-label="Delete post">
+                                <i class="bi bi-trash me-1" aria-hidden="true"></i> Delete
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <!-- Comments -->
+    <section class="card" aria-labelledby="comments-heading">
+        <div class="card-header bg-primary text-white">
+            <h2 id="comments-heading" class="h5 card-title mb-0">Comments ({{ total_comments_count }})</h2>
+        </div>
+        <div class="card-body p-0">
+            {% include 'core/includes/comments/comments_display.html' with post=post comments=comments %}
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Reddit comments functionality now integrated in main script.js -->
+{% endblock %}

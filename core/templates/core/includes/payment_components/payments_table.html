@@ -1,0 +1,71 @@
+{% comment %}
+  Template for displaying payment/donation history in a table format
+  
+  Parameters:
+  - payments: List of payment objects to display (required)
+  - show_transaction_id: Whether to show transaction ID column (default: True)
+  - show_donation_type: Whether to show donation type column (default: True)
+  - show_status: Whether to show payment status column (default: True)
+  - show_date: Whether to show date column (default: True)
+  - table_class: Additional CSS classes for the table (default: "table-striped")
+  
+  Usage:
+  {% include 'core/includes/payments_table.html' with payments=payments %}
+{% endcomment %}
+
+{% load i18n %}
+
+<div class="table-responsive">
+    <table class="table {{ table_class|default:'table-striped' }}">
+        <thead>
+            <tr>
+                {% if show_date|default:True %}<th>Date</th>{% endif %}
+                <th>Amount</th>
+                {% if show_donation_type|default:True %}<th>Type</th>{% endif %}
+                {% if show_status|default:True %}<th>Status</th>{% endif %}
+                {% if show_transaction_id|default:True %}<th>Transaction ID</th>{% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for payment in payments %}
+                <tr>
+                    {% if show_date|default:True %}
+                    <td>{{ payment.created_at|date:"M d, Y" }}</td>
+                    {% endif %}
+                    
+                    <td>${{ payment.total }}</td>
+                    
+                    {% if show_donation_type|default:True %}
+                    <td>
+                        {% if payment.donation_type == 5 %}
+                            Small Donation
+                        {% elif payment.donation_type == 10 %}
+                            Medium Donation
+                        {% elif payment.donation_type == 25 %}
+                            Large Donation
+                        {% elif payment.donation_type == 0 %}
+                            Custom Donation
+                        {% endif %}
+                    </td>
+                    {% endif %}
+                    
+                    {% if show_status|default:True %}
+                    <td>
+                        {% include 'core/includes/payment_status_badge.html' with status=payment.status %}
+                    </td>
+                    {% endif %}
+                    
+                    {% if show_transaction_id|default:True %}
+                    <td>
+                        {% if payment.transaction_id %}
+                            <small class="text-muted">{{ payment.transaction_id }}</small>
+                        {% else %}
+                            <small class="text-muted">N/A</small>
+                        {% endif %}
+                    </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

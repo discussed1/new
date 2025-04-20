@@ -1,0 +1,9 @@
+{% comment %}
+  Redirects to the payment_components location of empty_donations.html
+  This is to maintain backward compatibility with existing imports
+{% endcomment %}
+
+{% include 'core/includes/payment_components/empty_donations.html' with 
+  classes=classes 
+  text=text
+%}

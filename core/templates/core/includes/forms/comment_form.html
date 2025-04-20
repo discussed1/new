@@ -1,0 +1,93 @@
+{% comment %}
+  Unified template for both top-level comment form and reply forms
+  
+  Parameters:
+  - post: The post being commented on (required)
+  - comment: The parent comment if replying to a comment (optional)
+  - comment_form: The CommentForm instance (optional for reply forms)
+  - card_class: Additional CSS classes for the card (optional)
+  - is_reply: Whether this is a reply form (default: false)
+  - inline: Whether to render as inline reply form (default: false for regular comments, true for replies)
+  
+  Usage for main comment form:
+  {% include 'core/includes/comment_form.html' with post=post comment_form=comment_form %}
+  
+  Usage for reply form:
+  {% include 'core/includes/comment_form.html' with comment=comment is_reply=True inline=True %}
+{% endcomment %}
+
+{% if is_reply|default:False and inline|default:True %}
+  {# Inline reply form #}
+  <div class="comment-actions">
+    <button class="reply-toggle btn btn-sm btn-outline-secondary" 
+            data-comment-id="{{ comment.id }}"
+            aria-expanded="false"
+            aria-controls="reply-form-{{ comment.id }}">
+        <i class="bi bi-reply-fill me-1" aria-hidden="true"></i> Reply
+    </button>
+
+    <div class="reply-form" id="reply-form-{{ comment.id }}" style="display: none;" aria-hidden="true">
+      {% if user.is_authenticated %}
+        <form method="post" action="{% url 'add_comment' comment.post.id %}" class="mt-2">
+          {% csrf_token %}
+          <input type="hidden" name="parent_id" value="{{ comment.id }}">
+          <div class="mb-3">
+            <label for="reply-content-{{ comment.id }}" class="form-label sr-only">Your reply</label>
+            <textarea name="content" id="reply-content-{{ comment.id }}" rows="3" class="form-control" placeholder="Write your reply..." required aria-label="Your reply"></textarea>
+          </div>
+          <div class="text-end">
+            <button type="button" class="btn btn-sm btn-outline-secondary me-2 cancel-reply" data-comment-id="{{ comment.id }}">Cancel</button>
+            <button type="submit" class="btn btn-sm btn-primary">Submit</button>
+          </div>
+        </form>
+      {% else %}
+        <div class="alert alert-secondary mt-2" role="alert">
+          <a href="{% url 'account_login' %}?next={{ request.path }}" class="alert-link">Log in</a> to reply to this comment.
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% else %}
+  {# Main comment form #}
+  {% if user.is_authenticated %}
+  <section class="card {% if not comment %}mb-4{% endif %} {{ card_class|default:'' }}" aria-labelledby="comment-form-heading">
+    <div class="card-body p-3">
+      <h2 id="comment-form-heading" class="sr-only">Add a comment</h2>
+      <div class="d-flex align-items-center mb-3">
+        {% if user.profile.avatar %}
+          <img src="{{ user.profile.avatar.url }}" alt="{{ user.username }}'s avatar" class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
+        {% else %}
+          <div class="avatar-placeholder rounded-circle me-2 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; background-color: #e9ecef;" aria-hidden="true">
+            <i class="bi bi-person-fill"></i>
+          </div>
+        {% endif %}
+        <span>Comment as <a href="{% url 'profile' user.username %}" class="fw-bold">{{ user.username }}</a></span>
+      </div>
+      <form method="post" action="{% url 'add_comment' post.id %}">
+        {% csrf_token %}
+        {% if comment %}
+          <input type="hidden" name="parent_id" value="{{ comment.id }}">
+        {% endif %}
+        <div class="mb-3">
+          <label for="content_id_content" class="form-label sr-only">Comment text</label>
+          {% if comment_form %}
+            {{ comment_form.content }}
+          {% else %}
+            <textarea name="content" class="form-control" rows="3" placeholder="{% if comment %}Write your reply...{% else %}Write a comment...{% endif %}" required></textarea>
+          {% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary">{% if comment %}Reply{% else %}Comment{% endif %}</button>
+        {% if comment %}
+          <button type="button" class="btn btn-outline-secondary cancel-reply-btn ms-2">Cancel</button>
+        {% endif %}
+      </form>
+    </div>
+  </section>
+  {% else %}
+  <div class="alert alert-info mb-4">
+    <p class="mb-0">
+      Please <a href="{% url 'account_login' %}">log in</a> or <a href="{% url 'account_signup' %}">sign up</a> to leave a comment.
+    </p>
+  </div>
+  {% endif %}
+{% endif %}

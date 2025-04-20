@@ -1,0 +1,27 @@
+{% comment %}
+  Template for displaying payment status with appropriate badge styling
+  
+  Parameters:
+  - status: The payment status string (required)
+  
+  Usage:
+  {% include 'core/includes/payment_status_badge.html' with status=payment.status %}
+{% endcomment %}
+
+{% if status == 'confirmed' %}
+    <span class="badge bg-success">Confirmed</span>
+{% elif status == 'waiting' %}
+    <span class="badge bg-warning text-dark">Pending</span>
+{% elif status == 'preauth' %}
+    <span class="badge bg-info">Pre-authorized</span>
+{% elif status == 'refunded' %}
+    <span class="badge bg-secondary">Refunded</span>
+{% elif status == 'rejected' %}
+    <span class="badge bg-danger">Rejected</span>
+{% elif status == 'error' %}
+    <span class="badge bg-danger">Error</span>
+{% elif status == 'input' %}
+    <span class="badge bg-light text-dark">Input</span>
+{% else %}
+    <span class="badge bg-light text-dark">{{ status }}</span>
+{% endif %}

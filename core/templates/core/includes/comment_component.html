@@ -1,0 +1,11 @@
+{% comment %}
+  Redirects to the comments location of comment_component.html
+  This is to maintain backward compatibility with existing imports
+{% endcomment %}
+
+{% include 'core/includes/comments/comment_component.html' with 
+  comment=comment 
+  user_comment_vote=user_comment_vote 
+  depth=depth 
+  post=post
+%}

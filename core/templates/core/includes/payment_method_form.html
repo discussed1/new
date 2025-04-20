@@ -1,0 +1,9 @@
+{% comment %}
+  Redirects to the payment_components location of payment_method_form.html
+  This is to maintain backward compatibility with existing imports
+{% endcomment %}
+
+{% include 'core/includes/payment_components/payment_method_form.html' with 
+  cancel_url=cancel_url
+  use_enhanced_ui=use_enhanced_ui
+%}

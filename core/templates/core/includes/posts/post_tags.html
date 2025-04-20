@@ -1,0 +1,22 @@
+{% comment %}
+  Template for displaying post tags
+  
+  Parameters:
+  - post: The post with tags to display (required)
+  - class: Additional CSS classes for the container (optional)
+  
+  Usage:
+  {% include 'core/includes/post_tags.html' with post=post %}
+{% endcomment %}
+
+{% if post.tags.all %}
+    <div class="post-tags {% if class %}{{ class }}{% else %}mb-3{% endif %}" aria-label="Post tags">
+        {% for tag in post.tags.all %}
+            <a href="{% url 'home' %}?tag={{ tag.slug }}" 
+               class="badge bg-light text-dark text-decoration-none me-1 mb-1"
+               aria-label="Tag: {{ tag.name }}">
+                <i class="bi bi-tag-fill me-1" aria-hidden="true"></i>{{ tag.name }}
+            </a>
+        {% endfor %}
+    </div>
+{% endif %}

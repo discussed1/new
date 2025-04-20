@@ -1,0 +1,11 @@
+{% comment %}
+  Redirects to the comments location of comments_display.html
+  This is to maintain backward compatibility with existing imports
+{% endcomment %}
+
+{% include 'core/includes/comments/comments_display.html' with 
+  post=post 
+  comments=comments 
+  id=id 
+  classes=classes
+%}

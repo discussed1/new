@@ -1,0 +1,13 @@
+{% comment %}
+  Redirects to the forms location of comment_form.html
+  This is to maintain backward compatibility with existing imports
+{% endcomment %}
+
+{% include 'core/includes/forms/comment_form.html' with 
+  post=post
+  comment=comment
+  comment_form=comment_form
+  card_class=card_class
+  is_reply=is_reply
+  inline=inline
+%}

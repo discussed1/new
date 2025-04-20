@@ -1,0 +1,33 @@
+{% comment %}
+  Template for displaying all comments for a post with proper nesting
+  
+  Parameters:
+  - post: The post being commented on (required)
+  - comments: The root-level comments to display (required)
+  - show_form: Whether to show the comment form (default: True)
+  - card_class: Additional CSS classes for the card (optional)
+  
+  Usage:
+  {% include 'core/includes/comments_display.html' with post=post comments=comments %}
+{% endcomment %}
+
+{% load mptt_tags %}
+{% load core_tags %}
+
+<div class="comments-container" aria-label="Comments section">
+    {% if show_form|default:True %}
+        {% include 'core/includes/forms/comment_form.html' with post=post card_class=card_class %}
+    {% endif %}
+
+    <!-- Comments list with reddit-style nesting -->
+    {% if comments %}
+        {% for root_comment in comments %}
+            {% include 'core/includes/comments/comment_thread_component.html' with comment=root_comment %}
+        {% endfor %}
+    {% else %}
+        <!-- No comments yet -->
+        {% with content_block="<p class='text-muted mb-0 text-center'>No comments yet. Be the first to comment!</p>" %}
+            {% include 'core/includes/card_layout.html' with content=content_block %}
+        {% endwith %}
+    {% endif %}
+</div>

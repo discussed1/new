@@ -1,0 +1,11 @@
+{% comment %}
+  Redirects to the posts location of post_header.html
+  This is to maintain backward compatibility with existing imports
+{% endcomment %}
+
+{% include 'core/includes/posts/post_header.html' with 
+  post=post 
+  link_title=link_title 
+  title_classes=title_classes 
+  show_community=show_community
+%}

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Discuss - A community platform for discussions and sharing ideas">
+    <title>{% block title %}Discuss{% endblock %}</title>
+    <meta name="csrf-token" content="{{ csrf_token }}">  <!-- For AJAX calls -->
+    {% load static %}
+    {% load django_bootstrap5 %}
+    
+    <!-- Bootstrap Icons - Essential for the UI -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Single Consolidated CSS File for the entire application -->
+    <link href="{% static 'core/css/consolidated/discuss.css' %}" rel="stylesheet">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-dark text-light">
+    <!-- Skip Navigation Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <!-- Unified Navbar for All Devices -->
+    <nav class="navbar navbar-dark sticky-top" aria-label="Main navigation">
+        <div class="container">
+            <!-- Single Header Row with all elements -->
+            <div class="header-row">
+                <!-- Left side: Logo and icons -->
+                <div class="header-left">
+                    <!-- Logo - only icon, no text -->
+                    <a class="navbar-brand" href="{% url 'home' %}" aria-label="Discuss Home">
+                        <i class="bi bi-chat-dots adaptive-icon" aria-hidden="true"></i>
+                    </a>
+                    
+                    <!-- Donation Link -->
+                    <a href="{% url 'donate' %}" class="nav-link donation-link" aria-label="Support with donation">
+                        <i class="bi bi-currency-euro adaptive-icon" aria-hidden="true"></i>
+                        <span class="donate-text">donate</span>
+                    </a>
+                </div>
+                
+                <!-- Center: Search bar -->
+                <div class="search-container">
+                    <form action="{% url 'search' %}" method="GET" role="search" class="search-form">
+                        <div class="input-group">
+                            <label for="search-input" class="sr-only">Search</label>
+                            <div class="search-wrapper">
+                                <input id="search-input" class="form-control search-input standalone-search" type="search" name="query" placeholder="Search" aria-label="Search">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Right side: User menu -->
+                <div class="user-menu">
+                    {% if user.is_authenticated %}
+                        <!-- Notifications -->
+                        <a class="nav-link position-relative" href="{% url 'notification_list' %}" aria-label="Notifications">
+                            <i class="bi bi-bell adaptive-icon" aria-hidden="true"></i>
+                            {% if unread_notification_count > 0 %}
+                                <span class="badge bg-danger badge-notification" aria-label="{{ unread_notification_count }} unread notifications">
+                                    {{ unread_notification_count }}
+                                </span>
+                            {% endif %}
+                        </a>
+                        
+                        <!-- Messages -->
+                        <a class="nav-link position-relative" href="{% url 'postman:inbox' %}" aria-label="Private Messages">
+                            <i class="bi bi-envelope adaptive-icon" aria-hidden="true"></i>
+                            {% load postman_tags %}
+                            {% postman_unread as messages_count %}
+                            {% if messages_count > 0 %}
+                                <span class="badge bg-danger badge-notification" aria-label="{{ messages_count }} unread messages">
+                                    {{ messages_count }}
+                                </span>
+                            {% endif %}
+                        </a>
+                        
+                        <!-- User Dropdown - No arrow -->
+                        <div class="dropdown">
+                            <button class="btn btn-dark dropdown-toggle nav-link d-flex align-items-center justify-content-center" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 0.1rem !important; height: 100%;">
+                                <div class="nav-avatar">
+                                    {% if user_profile.avatar %}
+                                        <img src="{{ user_profile.avatar.url }}" alt="{{ user.username }}'s avatar" width="22" height="22" class="adaptive-icon">
+                                    {% else %}
+                                        <div class="avatar-placeholder adaptive-icon">
+                                            <span>{{ user.username|first|upper }}</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'profile' user.username %}">
+                                        <i class="bi bi-person me-2" aria-hidden="true"></i> My Profile
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'edit_profile' %}">
+                                        <i class="bi bi-gear me-2" aria-hidden="true"></i> Settings
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'donation_history' %}">
+                                        <i class="bi bi-credit-card me-2" aria-hidden="true"></i> Donation History
+                                    </a>
+                                </li>
+                                <li>
+                                    <form id="logout-form" method="post" action="{% url 'account_logout' %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="dropdown-item">
+                                            <i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i> Logout
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <a class="nav-link" href="{% url 'account_login' %}">
+                            <i class="bi bi-box-arrow-in-right adaptive-icon me-1" aria-hidden="true"></i>
+                            <span class="d-none d-md-inline">Login</span>
+                        </a>
+                        <a class="nav-link" href="{% url 'account_signup' %}">
+                            <i class="bi bi-person-plus adaptive-icon me-1" aria-hidden="true"></i>
+                            <span class="d-none d-md-inline">Register</span>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- No Navigation Links Here -->
+        </div>
+    </nav>
+    
+    <!-- Flash Messages -->
+    {% if messages %}
+        <div class="container mt-3" aria-live="polite" aria-atomic="true">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <!-- Main Content -->
+    <main id="main-content" class="pb-4">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Footer - Bootstrap 5 Dark Theme -->
+    <footer class="py-3 mt-4" style="background-color: var(--bs-body-tertiary-bg-dark); border-top: 1px solid var(--bs-border-color-dark);">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <h5 class="mb-2" style="color: var(--bs-body-emphasis-color-dark); font-size: 1.1rem;">Discuss</h5>
+                    <p class="small" style="color: var(--bs-body-secondary-color-dark);">A community platform for discussions and sharing.</p>
+                </div>
+                <div class="col-md-3">
+                    <h5 class="mb-2" style="color: var(--bs-body-emphasis-color-dark); font-size: 0.9rem;">Links</h5>
+                    <ul class="list-unstyled small">
+                        <li class="mb-1"><a href="{% url 'home' %}" style="color: var(--bs-body-secondary-color-dark); text-decoration: none;">Home</a></li>
+                        <li class="mb-1"><a href="{% url 'community_list' %}" style="color: var(--bs-body-secondary-color-dark); text-decoration: none;">Communities</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5 class="mb-2" style="color: var(--bs-body-emphasis-color-dark); font-size: 0.9rem;">Legal</h5>
+                    <ul class="list-unstyled small">
+                        <li class="mb-1"><a href="#" style="color: var(--bs-body-secondary-color-dark); text-decoration: none;">Privacy Policy</a></li>
+                        <li class="mb-1"><a href="#" style="color: var(--bs-body-secondary-color-dark); text-decoration: none;">Terms of Service</a></li>
+                        <li class="mb-1"><a href="#" style="color: var(--bs-body-secondary-color-dark); text-decoration: none;">Accessibility</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-3" style="border-color: var(--bs-border-color-dark); opacity: 0.1;">
+            <p class="text-center small mb-0" style="color: var(--bs-body-secondary-color-dark); font-size: 0.8rem;">&copy; 2025 Discuss. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <!-- Bootstrap Bundle with Popper -->
+    {% bootstrap_javascript %}
+    
+    <!-- Direct Bootstrap JS reference to ensure it's loaded -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- jQuery (required for some features) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Unified Core App Script -->
+    <script src="{% static 'core/js/script.js' %}"></script>
+    
+    <!-- Accessibility Scripts moved to consolidated script.js -->
+    

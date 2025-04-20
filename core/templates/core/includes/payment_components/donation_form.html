@@ -1,0 +1,39 @@
+{% comment %}
+  Template for displaying donation form
+  
+  Parameters:
+  - form: The donation form to render (required)
+  - messages: Form error messages (optional)
+  - submit_label: The label for the submit button (optional, default: "Continue to Payment")
+  
+  Usage:
+  {% include 'core/includes/donation_form.html' with form=form %}
+{% endcomment %}
+
+{% load i18n %}
+
+{% if messages %}
+<div class="alert alert-danger">
+    {% for message in messages %}
+        {{ message }}
+    {% endfor %}
+</div>
+{% endif %}
+
+<form method="post" class="mt-4">
+    {% csrf_token %}
+    
+    {% include 'core/includes/form_field.html' with field=form.donation_type label_text="Donation Amount" label_class="fw-bold" %}
+    
+    <div id="custom-amount-group" class="form-group mb-3" style="{% if form.donation_type.value != '0' %}display: none;{% endif %}">
+        {% include 'core/includes/form_field.html' with field=form.custom_amount label_text="Custom Amount ($)" label_class="fw-bold" %}
+    </div>
+    
+    {% include 'core/includes/form_field.html' with field=form.description label_text="Message (Optional)" label_class="fw-bold" %}
+    
+    <div class="d-grid mt-4">
+        <button type="submit" class="btn btn-primary btn-lg">{{ submit_label|default:"Continue to Payment" }}</button>
+    </div>
+</form>
+
+<!-- Custom amount visibility is handled by consolidated script.js -->

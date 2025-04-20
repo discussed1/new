@@ -1,0 +1,69 @@
+{% comment %}
+  Template for displaying Stripe-specific payment form components
+  
+  Parameters:
+  - public_key: Stripe public key (optional, if needed)
+  - show_card_info: Whether to show card info details (default: True)
+  
+  Usage:
+  {% include 'core/includes/payment_method_stripe.html' %}
+{% endcomment %}
+
+{% load i18n %}
+
+<!-- Stripe payment method selection -->
+<div class="payment-method-option mb-4" id="payment-method-stripe">
+    {% with header_content %}
+        <div class="form-check">
+            <input class="form-check-input payment-method-radio" type="radio" name="payment_variant" 
+                   id="stripe-method" value="stripe">
+            <label class="form-check-label fw-bold" for="stripe-method">
+                <i class="bi bi-credit-card me-2"></i> Pay with Credit Card (via Stripe)
+            </label>
+        </div>
+    {% endwith %}
+    
+    {% with body_content %}
+        {% if show_card_info|default:True %}
+        <div class="payment-method-details" id="stripe-details">
+            <div class="alert alert-info mb-3">
+                <small><i class="bi bi-info-circle me-1"></i> Secure payment processing with Stripe. Your card details are encrypted and never stored on our servers.</small>
+            </div>
+            
+            <div class="credit-card-icons mb-3 text-center">
+                <i class="fab fa-cc-visa fa-2x me-2" title="Visa"></i>
+                <i class="fab fa-cc-mastercard fa-2x me-2" title="Mastercard"></i>
+                <i class="fab fa-cc-amex fa-2x me-2" title="American Express"></i>
+                <i class="fab fa-cc-discover fa-2x" title="Discover"></i>
+            </div>
+            
+            <!-- This is where the Stripe Elements would be inserted by JavaScript -->
+            <div id="stripe-elements-container">
+                <div class="form-text mb-3">
+                    When you click "Proceed to Payment", you'll be redirected to Stripe's secure payment page.
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    {% endwith %}
+    
+    {% include 'core/includes/card_layout.html' with 
+        content=body_content 
+        header_class="bg-light"
+        card_class="" 
+        content_block_id=""
+        title=header_content %}
+</div>
+
+{% if stripe_js %}
+<!-- Stripe JavaScript would be included here when implementing the full integration -->
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const stripePublicKey = '{{ public_key }}';
+        
+        // Stripe Elements initialization code would go here
+        // This is placeholder for actual Stripe implementation
+    });
+</script>
+{% endif %}

@@ -1,0 +1,149 @@
+{% extends 'core/base.html' %}
+
+{% block title %}{% if page_type == 'create' %}Create Community{% else %}Communities{% endif %} | Discuss{% endblock %}
+
+{% block content %}
+{% if page_type == 'create' %}
+<!-- Create Community -->
+<div class="card shadow">
+    <div class="card-header bg-primary text-white">
+        <h3 class="card-title mb-0">Create a New Community</h3>
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+                <label for="{{ form.name.id_for_label }}" class="form-label">Community Name</label>
+                {{ form.name.errors }}
+                <div class="input-group">
+                    <span class="input-group-text">d/</span>
+                    <input type="text" name="{{ form.name.name }}" class="form-control {% if form.name.errors %}is-invalid{% endif %}" id="{{ form.name.id_for_label }}" required maxlength="50" placeholder="Community name">
+                </div>
+                {% if form.name.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ form.name.errors.0 }}
+                    </div>
+                {% else %}
+                    <div class="form-text">
+                        <small>Community names cannot be changed after creation</small>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="mb-3">
+                <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
+                {{ form.description.errors }}
+                <textarea name="{{ form.description.name }}" class="form-control {% if form.description.errors %}is-invalid{% endif %}" id="{{ form.description.id_for_label }}" rows="4" required maxlength="500" placeholder="What is this community about?"></textarea>
+                {% if form.description.errors %}
+                    <div class="invalid-feedback">
+                        {{ form.description.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">Create Community</button>
+                <a href="{% url 'community_list' %}" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% else %}
+<!-- Community List -->
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <h2 class="m-0">Communities</h2>
+    {% if user.is_authenticated %}
+    <a href="{% url 'create_community' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i> Create Community
+    </a>
+    {% endif %}
+</div>
+
+{% with content_block='' %}
+    {% with empty_message="No communities found." empty_action_url=user.is_authenticated|yesno:"create_community,account_login" empty_action_text=user.is_authenticated|yesno:"Create the first community,Login to create a community" %}
+        {% include 'core/includes/list_group.html' with 
+            items=communities 
+            item_template='core/includes/community_item.html' 
+            empty_message=empty_message
+            empty_action_url=empty_action_url
+            empty_action_text=empty_action_text
+            item_wrapper_class="list-group-item" %}
+    {% endwith %}
+{% endwith %}
+
+{% include 'core/includes/card_layout.html' with 
+    title="Browse Communities" 
+    content=content_block 
+    body_class="p-0" %}
+{% endif %}
+{% endblock %}
+
+{% block sidebar %}
+{% if page_type == 'create' %}
+<!-- Create Community Sidebar -->
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h5 class="card-title mb-0">Community Creation Tips</h5>
+    </div>
+    <div class="card-body">
+        <h6>What makes a good community?</h6>
+        <ul>
+            <li>Clear purpose and topic focus</li>
+            <li>Descriptive name that's easy to remember</li>
+            <li>Welcoming atmosphere for newcomers</li>
+            <li>Active moderation and participation</li>
+        </ul>
+        
+        <h6 class="mt-3">Guidelines</h6>
+        <ul>
+            <li>Be specific about your community's purpose</li>
+            <li>Choose a name that clearly represents the topic</li>
+            <li>Write a detailed description to attract the right members</li>
+            <li>Engage regularly with members and their posts</li>
+        </ul>
+    </div>
+</div>
+{% else %}
+<!-- Community List Sidebar -->
+{% with content_block='' %}
+    <p>Communities are groups where users can post, comment, and discuss shared interests.</p>
+    
+    <h6 class="mt-3">Community Guidelines</h6>
+    <ul>
+        <li>Be respectful to other members</li>
+        <li>Follow community-specific rules</li>
+        <li>Post relevant content</li>
+        <li>Avoid duplicate posts</li>
+    </ul>
+    
+    {% if user.is_authenticated %}
+        <a href="{% url 'create_community' %}" class="btn btn-primary w-100 mt-3">
+            <i class="bi bi-plus-circle me-1"></i> Create Your Own
+        </a>
+    {% else %}
+        <a href="{% url 'account_login' %}" class="btn btn-primary w-100 mt-3">Login to Create</a>
+    {% endif %}
+{% endwith %}
+
+{% include 'core/includes/card_layout.html' with 
+    title="About Communities" 
+    content=content_block 
+    card_class="mb-4" %}
+
+{% if user.is_authenticated %}
+{% with content_block='' %}
+    {% include 'core/includes/list_group.html' with 
+        items=user.communities.all 
+        item_template='core/includes/community_item.html' 
+        empty_message="You haven't joined any communities yet."
+        item_wrapper_class="list-group-item list-group-item-action" %}
+{% endwith %}
+
+{% include 'core/includes/card_layout.html' with 
+    title="My Communities" 
+    content=content_block 
+    body_class="p-0" %}
+{% endif %}
+{% endif %}
+{% endblock %}

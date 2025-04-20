@@ -1,0 +1,8 @@
+{% comment %}
+  Redirects to the payment_components location of donation_history_content.html
+  This is to maintain backward compatibility with existing imports
+{% endcomment %}
+
+{% include 'core/includes/payment_components/donation_history_content.html' with 
+  payments=payments
+%}

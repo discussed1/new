@@ -1,0 +1,31 @@
+{% comment %}
+  Social share buttons component
+{% endcomment %}
+
+<div class="dropdown d-inline-block {{ dropdown_direction|default:'dropdown-menu-end' }}">
+  <button class="btn {{ button_class|default:'btn-sm btn-outline-secondary' }} dropdown-toggle" type="button" id="shareDropdown{{ post.id }}" data-bs-toggle="dropdown" aria-expanded="false">
+    <i class="bi bi-share" aria-hidden="true"></i> {{ button_text|default:'Share' }}
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="shareDropdown{{ post.id }}">
+    <li>
+      <a class="dropdown-item" href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri|urlencode }}&text={{ post.title|urlencode }}" target="_blank" rel="noopener">
+        <i class="bi bi-twitter me-2" aria-hidden="true"></i> Twitter
+      </a>
+    </li>
+    <li>
+      <a class="dropdown-item" href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri|urlencode }}" target="_blank" rel="noopener">
+        <i class="bi bi-facebook me-2" aria-hidden="true"></i> Facebook
+      </a>
+    </li>
+    <li>
+      <a class="dropdown-item" href="https://www.linkedin.com/shareArticle?mini=true&url={{ request.build_absolute_uri|urlencode }}&title={{ post.title|urlencode }}" target="_blank" rel="noopener">
+        <i class="bi bi-linkedin me-2" aria-hidden="true"></i> LinkedIn
+      </a>
+    </li>
+    <li>
+      <a class="dropdown-item" href="mailto:?subject={{ post.title|urlencode }}&body={{ request.build_absolute_uri|urlencode }}" target="_blank" rel="noopener">
+        <i class="bi bi-envelope me-2" aria-hidden="true"></i> Email
+      </a>
+    </li>
+  </ul>
+</div>

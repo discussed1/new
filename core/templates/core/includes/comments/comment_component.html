@@ -1,0 +1,93 @@
+{% comment %}
+Unified comment component template that handles rendering a single comment
+with all necessary elements (voting buttons, author info, content, etc.)
+
+Parameters:
+- comment: The comment to display (required)
+- user_comment_votes: Dictionary of user's votes (optional)
+- show_collapse_indicator: Whether to show thread collapse indicator (default: False)
+- show_reply_form: Whether to show inline reply form (default: True)
+- show_indentation: Whether to show indentation markers (default: False)
+- level_adjustment: Adjustment to nesting level count (optional)
+- is_compact: Use compact display mode (default: False)
+
+Usage:
+{% include 'core/includes/comment_component.html' with comment=comment %}
+{% endcomment %}
+
+{% load core_tags %}
+
+<div class="comment-component {% if is_compact %}compact{% endif %}" id="comment-{{ comment.id }}">
+    {% if show_indentation|default:False %}
+        {% with level=comment.level %}
+            {% if level_adjustment %}
+                {% with adjusted_level=level|add:level_adjustment %}
+                    {% for i in "12345"|make_list %}
+                        {% if forloop.counter <= adjusted_level %}
+                            <div class="comment-indent indent-level-{{ forloop.counter }}"></div>
+                        {% endif %}
+                    {% endfor %}
+                {% endwith %}
+            {% else %}
+                {% for i in "12345"|make_list %}
+                    {% if forloop.counter <= level %}
+                        <div class="comment-indent indent-level-{{ forloop.counter }}"></div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    {% endif %}
+
+    <div class="comment-wrapper">
+        <!-- Vote controls -->
+        <div class="vote-column">
+            {% include 'core/includes/posts/comment_vote_buttons.html' with comment=comment user_comment_votes=user_comment_votes %}
+        </div>
+        
+        <!-- Comment content -->
+        <div class="comment-content-column">
+            <div class="comment-meta">
+                {% if show_collapse_indicator|default:False %}
+                    <span class="collapse-indicator">▼</span>
+                {% endif %}
+                
+                <!-- Author information -->
+                <div class="comment-author-info">
+                    {% if comment.author.profile.avatar %}
+                        <img src="{{ comment.author.profile.avatar.url }}" alt="{{ comment.author.username }}'s avatar" class="avatar avatar-sm me-1" width="16" height="16">
+                    {% else %}
+                        <i class="bi bi-person-fill me-1" aria-hidden="true"></i>
+                    {% endif %}
+                    
+                    <a href="{% url 'profile' comment.author.username %}" class="comment-author me-1">{{ comment.author.username }}</a>
+                    
+                    {% if comment.author.profile.country %}
+                        <img src="{{ comment.author.profile.country.flag }}" alt="{{ comment.author.profile.country.name }}" class="country-flag me-1" width="16" height="11"> 
+                    {% endif %}
+                    
+                    {{ comment.author.profile.karma|reputation_badge }}
+                    <span class="mx-1">•</span>
+                    <span>{{ comment.created_at|timesince }} ago</span>
+                </div>
+            </div>
+            
+            <!-- Comment content body -->
+            <div class="comment-body">
+                {{ comment.content|linebreaks }}
+            </div>
+            
+            <!-- Reply form -->
+            {% if show_reply_form|default:True %}
+                {% include 'core/includes/forms/comment_form.html' with comment=comment post=comment.post is_reply=True inline=True %}
+            {% endif %}
+            
+            <!-- Collapsed thread count -->
+            {% if show_collapsed_count|default:False and not comment.is_leaf_node %}
+                <div class="collapsed-count">
+                    <i class="bi bi-chat-fill me-1" aria-hidden="true"></i>
+                    {{ comment.get_descendant_count }} more repl{% if comment.get_descendant_count != 1 %}ies{% else %}y{% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

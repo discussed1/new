@@ -1,0 +1,33 @@
+[project]
+name = "repl-nix-workspace"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.11"
+dependencies = [
+    "django>=5.2",
+    "pillow>=11.1.0",
+    "django-el-pagination>=4.1.2",
+    "django-debug-toolbar>=5.1.0",
+    "django-cacheops>=7.1",
+    "django-filter>=25.1",
+    "djangorestframework>=3.16.0",
+    "django-watson>=1.6.3",
+    "django-allauth>=65.7.0",
+    "django-markdownx>=4.0.7",
+    "requests>=2.32.3",
+    "dj-database-url>=2.3.0",
+    "psycopg2-binary>=2.9.10",
+    "django-avatar>=8.0.1",
+    "django-countries>=7.6.1",
+    "django-taggit>=6.1.0",
+    "django-mptt>=0.17.0",
+    "django-payments>=3.0.1",
+    "sentry-sdk>=2.25.1",
+    "django-social-share>=2.3.0",
+    "django-postman>=4.5",
+    "django-bootstrap5>=25.1",
+    "django-extensions>=3.2.3",
+    "django-silk>=5.3.2",
+    "stripe>=12.0.0",
+    "trafilatura>=2.0.0",
+]

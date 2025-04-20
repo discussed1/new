@@ -1,0 +1,29 @@
+{% comment %}
+Consolidated community item template for displaying community information
+Parameters:
+- community: The community object to display
+- show_actions: Boolean to show action buttons (default: True)
+- compact: Boolean for compact display (default: False)
+{% endcomment %}
+
+<div class="{% if not compact %}list-group-item p-3{% endif %}">
+    <div class="d-flex align-items-center">
+        <i class="fas fa-users {% if compact %}text-primary me-2{% else %}fa-2x text-primary me-3{% endif %}"></i>
+        <div class="community-info flex-grow-1">
+            <h5 class="mb-1">
+                <a href="{% url 'community_detail' community.id %}" class="text-decoration-none">d/{{ community.name }}</a>
+            </h5>
+            {% if not compact %}
+            <p class="text-muted mb-1">{{ community.description|truncatechars:100 }}</p>
+            <div class="community-meta small text-muted">
+                <span><i class="fas fa-user me-1"></i> {{ community.member_count|default:community.members.count }} members</span>
+                <span class="mx-2">•</span>
+                <span><i class="fas fa-calendar-alt me-1"></i> Created {{ community.created_at|date:"M d, Y" }}</span>
+            </div>
+            {% endif %}
+        </div>
+        {% if show_actions %}
+        <a href="{% url 'community_detail' community.id %}" class="btn btn-outline-primary">View</a>
+        {% endif %}
+    </div>
+</div>

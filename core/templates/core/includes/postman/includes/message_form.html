@@ -1,0 +1,27 @@
+{% comment %}
+  Template for displaying message form fields with consistent styling
+  
+  Parameters:
+  - form: The message form to render (required)
+  - next_url: The URL to redirect to after form submission (optional)
+  
+  Usage:
+  {# Removed circular reference to message_form.html #}
+{% endcomment %}
+
+{% load i18n %}
+{% load core_tags %}
+
+<div class="row">
+    <div class="col-md-12">
+        {% for field in form.visible_fields %}
+            {% include 'core/includes/forms/form_field.html' with field=field %}
+        {% endfor %}
+        
+        {% if next_url %}
+        <input type="hidden" name="next" value="{{ next_url }}" />
+        {% endif %}
+        
+        {% include 'core/includes/components/action_buttons.html' with primary_label=_("Send") primary_icon="bi-envelope-fill" %}
+    </div>
+</div>

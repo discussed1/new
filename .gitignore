@@ -1,0 +1,72 @@
+# Node
+node_modules/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.pythonlibs/
+.cache/
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Temp folders
+temp_repo/
+temp_extract/
+temp_push/
+minimal_repo/
+fresh_clone/
+discuss-package/
+discuss_core/
+attached_assets/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Cache
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Replit specific
+.replit.bak
+.upm/
+.config/
+
+# Generated files 
+generated-icon.png
+

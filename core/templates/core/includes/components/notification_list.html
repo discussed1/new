@@ -1,0 +1,56 @@
+{% comment %}
+Consolidated notification list template
+Parameters:
+- notifications: List of notification objects
+- show_pagination: Boolean to show pagination (default: True)
+- empty_message: Message to show when no notifications (default: "No notifications")
+{% endcomment %}
+
+{% if notifications %}
+<div class="notification-list">
+    {% for notification in notifications %}
+    <div class="notification-item {% if not notification.is_read %}unread{% endif %}" id="notification-{{ notification.id }}">
+        <div class="notification-icon">
+            {% if notification.notification_type == 'mention' %}
+            <i class="bi bi-at text-info" aria-hidden="true"></i>
+            {% elif notification.notification_type == 'reply' %}
+            <i class="bi bi-reply-fill text-success" aria-hidden="true"></i>
+            {% elif notification.notification_type == 'vote' %}
+            <i class="bi bi-hand-thumbs-up-fill text-primary" aria-hidden="true"></i>
+            {% else %}
+            <i class="bi bi-bell-fill text-secondary" aria-hidden="true"></i>
+            {% endif %}
+        </div>
+        <div class="notification-content">
+            <div class="notification-text">{{ notification.text }}</div>
+            <div class="notification-meta">
+                <small class="text-muted">{{ notification.created_at|timesince }} ago from @{{ notification.sender.username }}</small>
+            </div>
+            <div class="notification-actions">
+                {% if notification.post %}
+                <a href="{% url 'post_detail' notification.post.id %}" class="btn btn-sm btn-outline-primary">View Post</a>
+                {% endif %}
+                {% if notification.comment %}
+                <a href="{% url 'post_detail' notification.comment.post.id %}#comment-{{ notification.comment.id }}" class="btn btn-sm btn-outline-primary">View Comment</a>
+                {% endif %}
+                {% if not notification.is_read %}
+                <form method="post" action="{% url 'mark_notification_read' notification.id %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-secondary">Mark Read</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% if show_pagination|default:True %}
+    {% include 'core/includes/components/pagination.html' with page_obj=notifications %}
+{% endif %}
+
+{% else %}
+<div class="alert alert-info" role="alert">
+    {{ empty_message|default:"No notifications" }}
+</div>
+{% endif %}

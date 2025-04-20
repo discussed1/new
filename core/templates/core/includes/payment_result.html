@@ -1,0 +1,20 @@
+{% comment %}
+  Redirects to the payment_components location of payment_result.html
+  This is to maintain backward compatibility with existing imports
+{% endcomment %}
+
+{% include 'core/includes/payment_components/payment_result.html' with 
+  success=success
+  title=title
+  message=message
+  payment=payment
+  error_reason=error_reason
+  payment_details=payment_details
+  action_primary_link=action_primary_link
+  action_primary_text=action_primary_text
+  action_primary_icon=action_primary_icon
+  action_primary_class=action_primary_class
+  action_secondary_link=action_secondary_link
+  action_secondary_text=action_secondary_text
+  action_secondary_icon=action_secondary_icon
+%}

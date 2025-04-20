@@ -1,0 +1,58 @@
+{% comment %}
+  Template for displaying message details
+  
+  Parameters:
+  - message: The message to display (required)
+  - user: The current user (required)
+  - next_url: The URL to redirect to after actions (optional)
+  - reply_to_pk: The ID to use for reply (optional)
+  
+  Usage:
+  {# Removed circular reference to message_detail.html #}
+{% endcomment %}
+
+{% load i18n %}
+{% load core_tags %}
+
+<div class="message-container mb-4">
+    <div class="message-header mb-3">
+        <h4 class="message-subject">{{ message.subject }}</h4>
+        <div class="message-meta text-muted">
+            <div><strong>{% trans "Sender" %}:</strong> {{ message.sender|or_me:user }}</div>
+            <div><strong>{% trans "Recipient" %}:</strong> {{ message.recipient|or_me:user }}</div>
+            <div><strong>{% trans "Date" %}:</strong> {{ message.sent_at|date:"DATETIME_FORMAT" }}</div>
+        </div>
+    </div>
+    
+    <div class="message-body p-3 bg-light rounded">
+        {{ message.body|linebreaksbr }}
+    </div>
+    
+    <div class="message-actions mt-3">
+        <div class="btn-group" role="group">
+            {% if reply_to_pk %}
+            <a href="{% url 'postman:reply' reply_to_pk %}?next={{ next_url }}" class="btn btn-primary">
+                <i class="bi bi-reply"></i> {% trans "Reply" %}
+            </a>
+            {% endif %}
+            
+            <form action="{% url 'postman:archive' %}" method="post" style="display: inline;">
+                {% csrf_token %}
+                <input type="hidden" name="pks" value="{{ message.pk }}">
+                <input type="hidden" name="next" value="{{ next_url }}">
+                <button type="submit" class="btn btn-secondary">
+                    <i class="bi bi-archive"></i> {% trans "Archive" %}
+                </button>
+            </form>
+            
+            <form action="{% url 'postman:delete' %}" method="post" style="display: inline;">
+                {% csrf_token %}
+                <input type="hidden" name="pks" value="{{ message.pk }}">
+                <input type="hidden" name="next" value="{{ next_url }}">
+                <button type="submit" class="btn btn-danger">
+                    <i class="bi bi-trash"></i> {% trans "Delete" %}
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

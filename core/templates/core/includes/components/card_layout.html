@@ -1,0 +1,39 @@
+{% comment %}
+  Reusable card layout component
+  
+  Parameters:
+  - title: Card title (optional)
+  - content: Card content (required)
+  - footer: Card footer content (optional)
+  - header: Card header content (optional, overrides title)
+  - id: HTML ID for the card (optional)
+  - card_classes: Additional CSS classes for the card (optional)
+  - body_classes: Additional CSS classes for the card body (optional)
+  - header_classes: Additional CSS classes for the card header (optional)
+  - footer_classes: Additional CSS classes for the card footer (optional)
+  
+  Usage:
+  {% include 'core/includes/components/card_layout.html' with content=content_html %}
+{% endcomment %}
+
+<div class="card {% if card_classes %}{{ card_classes }}{% endif %}" {% if id %}id="{{ id }}"{% endif %}>
+  {% if header or title %}
+    <div class="card-header {% if header_classes %}{{ header_classes }}{% endif %}">
+      {% if header %}
+        {{ header }}
+      {% elif title %}
+        <h5 class="card-title mb-0">{{ title }}</h5>
+      {% endif %}
+    </div>
+  {% endif %}
+  
+  <div class="card-body {% if body_classes %}{{ body_classes }}{% endif %}">
+    {{ content|safe }}
+  </div>
+  
+  {% if footer %}
+    <div class="card-footer {% if footer_classes %}{{ footer_classes }}{% endif %}">
+      {{ footer }}
+    </div>
+  {% endif %}
+</div>
