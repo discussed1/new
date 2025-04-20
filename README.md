@@ -28,6 +28,13 @@ A dynamic Reddit-like social platform that enables community-driven content shar
 - django-countries for location data
 - django-postman for messaging
 - django-payments for donations
+- django-comments-xtd for enhanced commenting
+- django-activity-stream for activity feeds
+- django-hitcount for view counting
+- django-crispy-forms for better form rendering
+- django-ckeditor for rich text editing
+- django-axes for login security
+- django-haystack for advanced search
 - Sentry for error tracking
 
 ## Project Structure
@@ -499,9 +506,35 @@ Contributions to Discuss are welcome! Please follow these guidelines:
 6. Push to the branch (`git push origin feature/amazing-feature`)
 7. Open a Pull Request
 
+## Enhanced Features
+
+### Advanced Comment System
+The platform now includes django-comments-xtd for an enhanced commenting experience:
+- Threaded comments with unlimited nesting
+- Comment moderation
+- Comment voting
+- Email notifications for comment replies
+- Comment formatting with Markdown
+
+### Security Enhancements
+- django-axes provides protection against brute force attacks
+- Login attempt tracking and automatic account lockout
+- IP-based and username-based security measures
+
+### Performance Improvements
+- django-redis for caching frequently accessed data
+- django-hitcount for efficient view counting
+- Optimized database queries
+
+### Search Capabilities
+- django-haystack integration for advanced search functionality
+- Multiple backend support (Solr, Elasticsearch, Whoosh)
+- Faceted search and filtering options
+
 ## Known Issues
 
 1. There is an issue with URL reversing in the messaging system that needs to be fixed.
+2. CKEditor 4.22.1 has security vulnerabilities and should be updated to the LTS version or replaced with CKEditor 5.
 
 ## License
 
