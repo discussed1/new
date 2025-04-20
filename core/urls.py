@@ -63,6 +63,9 @@ urlpatterns = [
     
     # Test views
     path('comments-test/', views.comments_test, name='comments_test'),
+    
+    # Security
+    path('locked-out/', views.lockout_view, name='lockout'),
 ]
 
 # Serve media files in development

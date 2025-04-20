@@ -33,3 +33,10 @@ def sentry_test(request):
             'status': 'error_reported',
             'message': 'Test error reported to Sentry!'
         })
+
+
+def lockout_view(request):
+    """
+    View for django-axes lockout page.
+    """
+    return render(request, 'core/utils/lockout.html')

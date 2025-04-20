@@ -40,4 +40,4 @@ from .payment_views import (
 )
 
 # Utility views
-from .utils_views import sentry_status, sentry_test
+from .utils_views import sentry_status, sentry_test, lockout_view

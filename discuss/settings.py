@@ -94,6 +94,9 @@ INSTALLED_APPS = [
     'hitcount',  # View counting
     'crispy_forms',  # Better form rendering
     'ckeditor',  # Rich text editor
+    'ckeditor_uploader',  # CKEditor file uploads
+    'axes',  # Login security and brute force protection
+    'haystack',  # Advanced search capabilities
     
     # Debugging and developer tools
     'django_extensions',  # Various developer extensions
@@ -107,6 +110,9 @@ if DEBUG:
         'debug_toolbar.middleware.DebugToolbarMiddleware',
         'silk.middleware.SilkyMiddleware',  # Django Silk profiling middleware
     ])
+
+# Add django-axes middleware for login security
+MIDDLEWARE.append('axes.middleware.AxesMiddleware')
 
 # Silk configuration
 SILKY_PYTHON_PROFILER = True  # Enable Python profiling
@@ -252,6 +258,8 @@ MARKDOWNX_MEDIA_PATH = 'markdownx/'
 SITE_ID = 1
 
 AUTHENTICATION_BACKENDS = [
+    # AxesStandaloneBackend should be the first backend in the AUTHENTICATION_BACKENDS list
+    'axes.backends.AxesStandaloneBackend',
     # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
     # `allauth` specific authentication methods, such as login by e-mail
@@ -417,3 +425,20 @@ if SENTRY_DSN:
         # Set environment name 
         environment="development" if DEBUG else "production",
     )
+
+# Django Axes Configuration
+AXES_FAILURE_LIMIT = 5  # Number of login attempts before lockout
+AXES_COOLOFF_TIME = 1  # Hours before login attempts are reset
+AXES_LOCKOUT_TEMPLATE = 'core/utils/lockout.html'  # Template to show when locked out
+AXES_LOCKOUT_URL = '/locked-out/'  # URL to redirect to when locked out
+AXES_RESET_ON_SUCCESS = True  # Reset the number of failed attempts on successful login
+# Use the new setting instead of the deprecated one
+AXES_LOCKOUT_PARAMETERS = ['username', 'ip_address']  # Lock out based on both username and IP
+
+# Django Haystack Configuration
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
+    },
+}
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
