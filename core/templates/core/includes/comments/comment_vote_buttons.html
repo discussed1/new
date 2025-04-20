@@ -12,7 +12,13 @@
 {% load core_tags %}
 
 <div class="vote-buttons vote-buttons-comment" data-id="{{ comment.id }}" data-type="comment">
-    <button class="vote-button upvote-button {% dict_get user_comment_votes comment.id as user_vote %}{% if user_vote == 1 %}active{% endif %}" 
+    {% if user_comment_votes %}
+        {% get_dict_item user_comment_votes comment.id as user_vote %}
+    {% else %}
+        {% with user_vote=None %}
+    {% endif %}
+    
+    <button class="vote-button upvote-button {% if user_vote == 1 %}active{% endif %}" 
             data-vote="up" 
             data-id="{{ comment.id }}" 
             data-type="comment" 
@@ -33,4 +39,8 @@
             title="Downvote this comment">
         <i class="bi bi-arrow-down-circle-fill" aria-hidden="true"></i>
     </button>
+    
+    {% if not user_comment_votes %}
+        {% endwith %}
+    {% endif %}
 </div>

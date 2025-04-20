@@ -22,7 +22,7 @@
     <!-- Comments list with reddit-style nesting -->
     {% if comments %}
         {% for root_comment in comments %}
-            {% include 'core/includes/comments/comment_thread_component.html' with comment=root_comment %}
+            {% include 'core/includes/comments/comment_thread_component.html' with comment=root_comment user_comment_votes=user_comment_votes %}
         {% endfor %}
     {% else %}
         <!-- No comments yet -->
