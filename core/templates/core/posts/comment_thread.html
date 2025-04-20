@@ -38,6 +38,7 @@
       {% with content_block %}
           {% include 'core/includes/comments/comment_component.html' with 
               comment=comment.parent 
+              user_comment_votes=user_comment_votes
               show_reply_form=False
               is_compact=True %}
       {% endwith %}
@@ -54,6 +55,7 @@
               {% include 'core/includes/comments/comment_thread_component.html' with 
                   comment=comment 
                   descendants=descendants 
+                  user_comment_votes=user_comment_votes
                   max_depth=5 
                   level_adjustment="-2" %}
           </div>

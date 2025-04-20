@@ -1,0 +1,34 @@
+{% comment %}
+Template for displaying a comment thread with proper nesting
+
+Parameters:
+- comment: The root comment of the thread (required)
+- user_comment_votes: Dictionary of user's votes (optional)
+- show_reply_form: Whether to show inline reply form (default: True)
+- is_compact: Use compact display mode (default: False)
+
+Usage:
+{% include 'core/includes/comments/comment_thread_component.html' with comment=comment %}
+{% endcomment %}
+
+{% load mptt_tags %}
+{% load core_tags %}
+
+<div class="comment-thread" id="thread-{{ comment.id }}">
+    <!-- Display the parent comment -->
+    {% include 'core/includes/comments/comment_component.html' with comment=comment user_comment_votes=user_comment_votes %}
+    
+    <!-- Display child comments with proper nesting -->
+    {% if not comment.is_leaf_node %}
+        <div class="comment-children">
+            {% recursetree comment.get_children %}
+                {% include 'core/includes/comments/comment_component.html' with comment=node user_comment_votes=user_comment_votes show_indentation=True %}
+                {% if not node.is_leaf_node %}
+                    <div class="children">
+                        {{ children }}
+                    </div>
+                {% endif %}
+            {% endrecursetree %}
+        </div>
+    {% endif %}
+</div>

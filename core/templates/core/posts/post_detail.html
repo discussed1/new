@@ -62,7 +62,7 @@
             <h2 id="comments-heading" class="h5 card-title mb-0">Comments ({{ total_comments_count }})</h2>
         </div>
         <div class="card-body p-0">
-            {% include 'core/includes/comments/comments_display.html' with post=post comments=comments %}
+            {% include 'core/includes/comments/comments_display.html' with post=post comments=comments user_comment_votes=user_comment_votes %}
         </div>
     </section>
 </div>

@@ -150,6 +150,22 @@ def post_detail(request, pk):
         else:
             comment.user_vote = None
     
+    # Calculate total comments count
+    total_comments_count = Comment.objects.filter(post=post).count()
+    
+    # Create a dictionary of user's votes for comments
+    user_comment_votes = {}
+    if request.user.is_authenticated:
+        # Get all votes for this post's comments by the current user
+        comment_votes = Vote.objects.filter(
+            user=request.user,
+            comment__post=post
+        ).select_related('comment')
+        
+        # Create a dictionary mapping comment IDs to vote values
+        for vote in comment_votes:
+            user_comment_votes[vote.comment.id] = vote.value
+    
     # For testing purposes, simplify the context to avoid recursion issues
     if 'test' in sys.modules:
         context = {
@@ -162,6 +178,8 @@ def post_detail(request, pk):
             'comments': comments,
             'comment_form': comment_form,
             'title': post.title,
+            'total_comments_count': total_comments_count,
+            'user_comment_votes': user_comment_votes,
         }
     
     return render(request, 'core/posts/post_detail.html', context)
@@ -243,12 +261,26 @@ def comment_thread(request, pk):
     else:
         comment_form = None
     
+    # Create a dictionary of user's votes for comments
+    user_comment_votes = {}
+    if request.user.is_authenticated:
+        # Get all votes for this post's comments by the current user
+        comment_votes = Vote.objects.filter(
+            user=request.user,
+            comment__post=post
+        ).select_related('comment')
+        
+        # Create a dictionary mapping comment IDs to vote values
+        for vote in comment_votes:
+            user_comment_votes[vote.comment.id] = vote.value
+    
     context = {
         'post': post,
         'comment': comment,
         'comments': comments,
         'comment_form': comment_form,
         'title': f'Comment on {post.title}',
+        'user_comment_votes': user_comment_votes,
     }
     
     return render(request, 'core/posts/comment_thread.html', context)
