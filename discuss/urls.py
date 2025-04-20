@@ -21,6 +21,15 @@ urlpatterns = [
     # path('user-guide/', include('user_guide.urls')),  # User guide removed from application
     # Override postman URLs with our consolidated views
     path('messages/', include('core.views.messaging_urls', namespace='postman')),
+    
+    # New package URLs
+    path('comments/', include('django_comments_xtd.urls')),
+    # path('notifications/', include('notifications.urls')),  # Compatibility issues with Django 5.2
+    path('activity/', include('actstream.urls')),
+    path('hitcount/', include('hitcount.urls', namespace='hitcount')),
+    # path('ckeditor/', include('ckeditor.urls')),  # No URLs module in ckeditor
+    
+    # Main application URLs
     path('', include('core.urls')),
 ]
 

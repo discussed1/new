@@ -86,6 +86,15 @@ INSTALLED_APPS = [
     'postman',    # For private messaging between users
     'django_bootstrap5',  # For responsive Bootstrap 5 integration
     
+    # Newly installed packages
+    'django_comments',  # Required by django-comments-xtd
+    'django_comments_xtd',  # Enhanced comment system
+    # 'notifications',  # User notifications from django-notifications-hq - compatibility issues with Django 5.2
+    'actstream',  # Activity streams
+    'hitcount',  # View counting
+    'crispy_forms',  # Better form rendering
+    'ckeditor',  # Rich text editor
+    
     # Debugging and developer tools
     'django_extensions',  # Various developer extensions
     'silk',  # Advanced request profiling
@@ -260,6 +269,9 @@ DJANGO_NOTIFICATIONS_CONFIG = {
     'USE_JSONFIELD': True,
 }
 
+# Fix for django-notifications-hq compatibility with Django 5.2
+SILENCED_SYSTEM_CHECKS = ['models.E028']
+
 # django-el-pagination settings
 EL_PAGINATION_PER_PAGE = 10
 EL_PAGINATION_PAGE_OUT_OF_RANGE_404 = True
@@ -319,6 +331,62 @@ POSTMAN_DISALLOW_COPIES_ON_REPLY = False  # Allow copies on reply
 POSTMAN_DISABLE_USER_EMAILING = True  # No emails sent for now (can be enabled later)
 POSTMAN_AUTO_MODERATE_AS = True  # Auto-accept all messages
 POSTMAN_SHOW_USER_AS = 'username'  # Display user by username
+
+# Django Comments XTD settings
+COMMENTS_APP = 'django_comments_xtd'
+COMMENTS_XTD_MAX_THREAD_LEVEL = 5  # Maximum thread level
+COMMENTS_XTD_CONFIRM_EMAIL = False  # No email confirmation required
+COMMENTS_XTD_THREADED_EMAILS = False  # No threaded emails
+COMMENTS_XTD_APP_MODEL_OPTIONS = {
+    'core.post': {
+        'allow_flagging': True,
+        'allow_feedback': True,
+        'show_feedback': True,
+    }
+}
+
+# Django Activity Stream settings
+ACTSTREAM_SETTINGS = {
+    'MANAGER': 'actstream.managers.ActionManager',
+    'FETCH_RELATIONS': True,
+    'USE_JSONFIELD': True,
+}
+
+# Django Hitcount settings
+HITCOUNT_KEEP_HIT_ACTIVE = {'days': 7}
+HITCOUNT_HITS_PER_IP_LIMIT = 0  # Unlimited hits per IP
+HITCOUNT_EXCLUDE_USER_GROUP = ()  # Don't exclude any user groups
+
+# Django Redis settings
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+# Django Crispy Forms settings
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
+
+# Django CKEditor settings
+CKEDITOR_UPLOAD_PATH = 'uploads/'
+CKEDITOR_IMAGE_BACKEND = 'pillow'
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'Custom',
+        'toolbar_Custom': [
+            ['Bold', 'Italic', 'Underline'],
+            ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
+            ['Link', 'Unlink'],
+            ['RemoveFormat', 'Source']
+        ],
+        'height': 300,
+        'width': '100%',
+    },
+}
 
 # Sentry configuration for error tracking
 SENTRY_DSN = os.environ.get('SENTRY_DSN', '')
