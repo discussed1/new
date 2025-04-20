@@ -14,33 +14,51 @@
 <div class="vote-buttons vote-buttons-comment" data-id="{{ comment.id }}" data-type="comment">
     {% if user_comment_votes %}
         {% get_dict_item user_comment_votes comment.id as user_vote %}
+        
+        <button class="vote-button upvote-button {% if user_vote == 1 %}active{% endif %}" 
+                data-vote="up" 
+                data-id="{{ comment.id }}" 
+                data-type="comment" 
+                aria-label="Upvote"
+                title="Upvote this comment">
+            <i class="bi bi-arrow-up-circle-fill" aria-hidden="true"></i>
+        </button>
+        
+        <div class="vote-count" aria-live="polite" aria-atomic="true">
+            {{ comment.vote_count }}
+        </div>
+        
+        <button class="vote-button downvote-button {% if user_vote == -1 %}active{% endif %}" 
+                data-vote="down" 
+                data-id="{{ comment.id }}" 
+                data-type="comment" 
+                aria-label="Downvote"
+                title="Downvote this comment">
+            <i class="bi bi-arrow-down-circle-fill" aria-hidden="true"></i>
+        </button>
     {% else %}
         {% with user_vote=None %}
-    {% endif %}
-    
-    <button class="vote-button upvote-button {% if user_vote == 1 %}active{% endif %}" 
-            data-vote="up" 
-            data-id="{{ comment.id }}" 
-            data-type="comment" 
-            aria-label="Upvote"
-            title="Upvote this comment">
-        <i class="bi bi-arrow-up-circle-fill" aria-hidden="true"></i>
-    </button>
-    
-    <div class="vote-count" aria-live="polite" aria-atomic="true">
-        {{ comment.vote_count }}
-    </div>
-    
-    <button class="vote-button downvote-button {% if user_vote == -1 %}active{% endif %}" 
-            data-vote="down" 
-            data-id="{{ comment.id }}" 
-            data-type="comment" 
-            aria-label="Downvote"
-            title="Downvote this comment">
-        <i class="bi bi-arrow-down-circle-fill" aria-hidden="true"></i>
-    </button>
-    
-    {% if not user_comment_votes %}
+            <button class="vote-button upvote-button {% if user_vote == 1 %}active{% endif %}" 
+                    data-vote="up" 
+                    data-id="{{ comment.id }}" 
+                    data-type="comment" 
+                    aria-label="Upvote"
+                    title="Upvote this comment">
+                <i class="bi bi-arrow-up-circle-fill" aria-hidden="true"></i>
+            </button>
+            
+            <div class="vote-count" aria-live="polite" aria-atomic="true">
+                {{ comment.vote_count }}
+            </div>
+            
+            <button class="vote-button downvote-button {% if user_vote == -1 %}active{% endif %}" 
+                    data-vote="down" 
+                    data-id="{{ comment.id }}" 
+                    data-type="comment" 
+                    aria-label="Downvote"
+                    title="Downvote this comment">
+                <i class="bi bi-arrow-down-circle-fill" aria-hidden="true"></i>
+            </button>
         {% endwith %}
     {% endif %}
 </div>
