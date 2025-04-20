@@ -20,8 +20,7 @@ from .post_views import (
     post_detail, create_text_post, create_link_post,
     delete_post, add_comment, comment_thread,
     delete_comment, vote_post, vote_comment,
-    post_votes_api, comment_votes_api,
-    get_comment_children
+    get_comment_children, comments_test
 )
 
 # Notification views

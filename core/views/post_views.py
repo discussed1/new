@@ -39,6 +39,21 @@ def home(request, template='core/common/index.html', extra_context=None):
     return render(request, template, context)
 
 
+def comments_test(request):
+    """
+    Test view for django-comments-xtd
+    """
+    # Get the first post for testing
+    post = Post.objects.first()
+    
+    context = {
+        'post': post,
+        'title': 'Comments Test',
+    }
+    
+    return render(request, 'core/comments_test.html', context)
+
+
 def get_comment_children(comment, user, depth=0, max_depth=3):
     """
     Recursively get child comments up to a specified depth

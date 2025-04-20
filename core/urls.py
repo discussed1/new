@@ -60,6 +60,9 @@ urlpatterns = [
     
     # Error testing
     path('sentry-test/', views.sentry_test, name='sentry_test'),
+    
+    # Test views
+    path('comments-test/', views.comments_test, name='comments_test'),
 ]
 
 # Serve media files in development
