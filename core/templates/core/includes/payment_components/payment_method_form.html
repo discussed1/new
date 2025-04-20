@@ -9,7 +9,7 @@
   - use_enhanced_ui: Whether to use enhanced payment method UI with cards (optional, default: False)
   
   Usage:
-  {% include 'core/includes/payment_method_form.html' with cancel_url='donate' %}
+  {% include 'core/includes/payment_components/payment_method_form.html' with cancel_url='donate' %}
 {% endcomment %}
 
 {% load i18n %}
@@ -44,7 +44,7 @@
                 {% endif %}
             {% endwith %}
             
-            {% include 'core/includes/card_layout.html' with 
+            {% include 'core/includes/components/card_layout.html' with 
                 content=body_content 
                 header_class="bg-light"
                 card_class="" 
@@ -53,7 +53,7 @@
         </div>
         
         <!-- Stripe payment method -->
-        {% include 'core/includes/payment_method_stripe.html' %}
+        {% include 'core/includes/payment_components/payment_method_stripe.html' %}
         
         <!-- PayPal payment method -->
         <div class="payment-method-option mb-3" id="payment-method-paypal">
@@ -75,7 +75,7 @@
                 </div>
             {% endwith %}
             
-            {% include 'core/includes/card_layout.html' with 
+            {% include 'core/includes/components/card_layout.html' with 
                 content=body_content 
                 header_class="bg-light"
                 card_class="" 

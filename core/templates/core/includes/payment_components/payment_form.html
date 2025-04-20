@@ -11,7 +11,7 @@ Parameters:
     <p class="mb-0">{{ info_message|default:"Please complete your payment information below." }}</p>
 </div>
 
-{% include 'core/includes/payment_summary.html' with payment=payment title="Payment Summary" show_method=True %}
+{% include 'core/includes/payment_components/payment_summary.html' with payment=payment title="Payment Summary" show_method=True %}
 
 <div class="payment-form">
     <h4>Payment Details</h4>
@@ -53,7 +53,7 @@ Parameters:
         {% else %}
         <!-- For other providers, show the form fields -->
         {% for field in form %}
-            {% include 'core/includes/form_field.html' with field=field use_invalid_feedback=True %}
+            {% include 'core/includes/forms/form_field.html' with field=field use_invalid_feedback=True %}
         {% endfor %}
         {% endif %}
         

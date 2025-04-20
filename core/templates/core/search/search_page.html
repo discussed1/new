@@ -152,7 +152,7 @@
         </div>
     {% endwith %}
     
-    {% include 'core/includes/card_layout.html' with 
+    {% include 'core/includes/components/card_layout.html' with 
         title="Communities ("|add:communities|length|stringformat:"s"|add:")" 
         content=content_block 
         body_class="p-0"
@@ -184,7 +184,7 @@
         </div>
     {% endwith %}
     
-    {% include 'core/includes/card_layout.html' with 
+    {% include 'core/includes/components/card_layout.html' with 
         title="Users ("|add:users|length|stringformat:"s"|add:")" 
         content=content_block 
         body_class="p-0"
@@ -204,7 +204,7 @@
         </div>
     {% endwith %}
     
-    {% include 'core/includes/card_layout.html' with 
+    {% include 'core/includes/components/card_layout.html' with 
         title="Tags ("|add:tags|length|stringformat:"s"|add:")" 
         content=content_block 
         card_class="mb-4" %}
@@ -274,7 +274,7 @@
         </div>
     {% endwith %}
     
-    {% include 'core/includes/card_layout.html' with 
+    {% include 'core/includes/components/card_layout.html' with 
         title="Posts ("|add:posts|length|stringformat:"s"|add:")" 
         content=content_block 
         body_class="p-0" %}
@@ -331,7 +331,7 @@
         </div>
     {% endwith %}
     
-    {% include 'core/includes/card_layout.html' with 
+    {% include 'core/includes/components/card_layout.html' with 
         title="Other Related Results" 
         content=content_block 
         body_class="p-0"
@@ -348,7 +348,7 @@
         </div>
     {% endwith %}
     
-    {% include 'core/includes/card_layout.html' with 
+    {% include 'core/includes/components/card_layout.html' with 
         content=content_block %}
 {% endif %}
 
@@ -408,7 +408,7 @@
     </ul>
 {% endwith %}
 
-{% include 'core/includes/card_layout.html' with 
+{% include 'core/includes/components/card_layout.html' with 
     title="Search Tips" 
     content=search_tips_content 
     card_class="mb-4" %}
@@ -433,7 +433,7 @@
     </div>
 {% endwith %}
 
-{% include 'core/includes/card_layout.html' with 
+{% include 'core/includes/components/card_layout.html' with 
     title="Explore Discuss" 
     content=explore_links
     body_class="p-0" %}

@@ -12,7 +12,7 @@ Parameters:
 - is_compact: Use compact display mode (default: False)
 
 Usage:
-{% include 'core/includes/comment_component.html' with comment=comment %}
+{% include 'core/includes/comments/comment_component.html' with comment=comment %}
 {% endcomment %}
 
 {% load core_tags %}
@@ -41,7 +41,7 @@ Usage:
     <div class="comment-wrapper">
         <!-- Vote controls -->
         <div class="vote-column">
-            {% include 'core/includes/posts/comment_vote_buttons.html' with comment=comment user_comment_votes=user_comment_votes %}
+            {% include 'core/includes/comments/comment_vote_buttons.html' with comment=comment user_comment_votes=user_comment_votes %}
         </div>
         
         <!-- Comment content -->

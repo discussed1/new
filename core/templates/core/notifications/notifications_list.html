@@ -7,10 +7,10 @@
     <div class="row">
         <div class="col-lg-8 mx-auto">
             {% with content_block %}
-                {% include 'core/includes/notification_list.html' with notifications=notifications %}
+                {% include 'core/includes/components/notification_list.html' with notifications=notifications %}
             {% endwith %}
 
-            {% include 'core/includes/card_layout.html' with 
+            {% include 'core/includes/components/card_layout.html' with 
                 title="Notifications" 
                 content=content_block 
                 header_actions="<form method='post' action='{% url \"mark_all_notifications_read\" %}' class='d-inline'>{% csrf_token %}<button type='submit' class='btn btn-sm btn-outline-secondary'><i class='bi bi-check-all me-1'></i> Mark All as Read</button></form>" %}

@@ -8,7 +8,7 @@
   - card_class: Additional CSS classes for the card (optional)
   
   Usage:
-  {% include 'core/includes/comments_display.html' with post=post comments=comments %}
+  {% include 'core/includes/comments/comments_display.html' with post=post comments=comments %}
 {% endcomment %}
 
 {% load mptt_tags %}
@@ -27,7 +27,7 @@
     {% else %}
         <!-- No comments yet -->
         {% with content_block="<p class='text-muted mb-0 text-center'>No comments yet. Be the first to comment!</p>" %}
-            {% include 'core/includes/card_layout.html' with content=content_block %}
+            {% include 'core/includes/components/card_layout.html' with content=content_block %}
         {% endwith %}
     {% endif %}
 </div>

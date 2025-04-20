@@ -15,7 +15,7 @@
   - use_card: Whether to use card layout (default: False)
   
   Usage:
-  {% include 'core/includes/payment_summary.html' with payment=payment %}
+  {% include 'core/includes/payment_components/payment_summary.html' with payment=payment %}
 {% endcomment %}
 
 {% if use_card %}
@@ -55,7 +55,7 @@
         {% if payment.status and show_status %}
         <tr>
             <th>Status:</th>
-            <td>{% include 'core/includes/payment_status_badge.html' with status=payment.status %}</td>
+            <td>{% include 'core/includes/payment_components/payment_status_badge.html' with status=payment.status %}</td>
         </tr>
         {% endif %}
         {% if payment.transaction_id and show_transaction %}
@@ -112,7 +112,7 @@
         {% if payment.status and show_status %}
         <tr>
             <th>Status:</th>
-            <td>{% include 'core/includes/payment_status_badge.html' with status=payment.status %}</td>
+            <td>{% include 'core/includes/payment_components/payment_status_badge.html' with status=payment.status %}</td>
         </tr>
         {% endif %}
         {% if payment.transaction_id and show_transaction %}

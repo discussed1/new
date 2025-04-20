@@ -6,7 +6,7 @@
   - show_card_info: Whether to show card info details (default: True)
   
   Usage:
-  {% include 'core/includes/payment_method_stripe.html' %}
+  {% include 'core/includes/payment_components/payment_method_stripe.html' %}
 {% endcomment %}
 
 {% load i18n %}
@@ -47,7 +47,7 @@
         {% endif %}
     {% endwith %}
     
-    {% include 'core/includes/card_layout.html' with 
+    {% include 'core/includes/components/card_layout.html' with 
         content=body_content 
         header_class="bg-light"
         card_class="" 

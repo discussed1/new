@@ -62,9 +62,9 @@
 
 {% with content_block='' %}
     {% with empty_message="No communities found." empty_action_url=user.is_authenticated|yesno:"create_community,account_login" empty_action_text=user.is_authenticated|yesno:"Create the first community,Login to create a community" %}
-        {% include 'core/includes/list_group.html' with 
+        {% include 'core/includes/components/list_group.html' with 
             items=communities 
-            item_template='core/includes/community_item.html' 
+            item_template='core/includes/community/community_item.html' 
             empty_message=empty_message
             empty_action_url=empty_action_url
             empty_action_text=empty_action_text
@@ -72,7 +72,7 @@
     {% endwith %}
 {% endwith %}
 
-{% include 'core/includes/card_layout.html' with 
+{% include 'core/includes/components/card_layout.html' with 
     title="Browse Communities" 
     content=content_block 
     body_class="p-0" %}
@@ -126,21 +126,21 @@
     {% endif %}
 {% endwith %}
 
-{% include 'core/includes/card_layout.html' with 
+{% include 'core/includes/components/card_layout.html' with 
     title="About Communities" 
     content=content_block 
     card_class="mb-4" %}
 
 {% if user.is_authenticated %}
 {% with content_block='' %}
-    {% include 'core/includes/list_group.html' with 
+    {% include 'core/includes/components/list_group.html' with 
         items=user.communities.all 
-        item_template='core/includes/community_item.html' 
+        item_template='core/includes/community/community_item.html' 
         empty_message="You haven't joined any communities yet."
         item_wrapper_class="list-group-item list-group-item-action" %}
 {% endwith %}
 
-{% include 'core/includes/card_layout.html' with 
+{% include 'core/includes/components/card_layout.html' with 
     title="My Communities" 
     content=content_block 
     body_class="p-0" %}

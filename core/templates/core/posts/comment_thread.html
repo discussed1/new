@@ -36,13 +36,13 @@
       <!-- Parent comment context -->
       {% if comment.parent %}
       {% with content_block %}
-          {% include 'core/includes/comment_component.html' with 
+          {% include 'core/includes/comments/comment_component.html' with 
               comment=comment.parent 
               show_reply_form=False
               is_compact=True %}
       {% endwith %}
       
-      {% include 'core/includes/card_layout.html' with 
+      {% include 'core/includes/components/card_layout.html' with 
           title="Parent Comment" 
           content=content_block 
           card_class="mb-3" %}
@@ -51,7 +51,7 @@
       <!-- Main comment thread -->
       {% with content_block %}
           <div class="comments-container" aria-label="Comments section">
-              {% include 'core/includes/comment_thread_component.html' with 
+              {% include 'core/includes/comments/comment_thread_component.html' with 
                   comment=comment 
                   descendants=descendants 
                   max_depth=5 
@@ -59,7 +59,7 @@
           </div>
       {% endwith %}
       
-      {% include 'core/includes/card_layout.html' with 
+      {% include 'core/includes/components/card_layout.html' with 
           title="Comment Thread" 
           content=content_block 
           body_class="p-0"

@@ -10,10 +10,10 @@
   - inline: Whether to render as inline reply form (default: false for regular comments, true for replies)
   
   Usage for main comment form:
-  {% include 'core/includes/comment_form.html' with post=post comment_form=comment_form %}
+  {% include 'core/includes/forms/comment_form.html' with post=post comment_form=comment_form %}
   
   Usage for reply form:
-  {% include 'core/includes/comment_form.html' with comment=comment is_reply=True inline=True %}
+  {% include 'core/includes/forms/comment_form.html' with comment=comment is_reply=True inline=True %}
 {% endcomment %}
 
 {% if is_reply|default:False and inline|default:True %}

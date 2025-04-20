@@ -13,7 +13,9 @@
   - footer_classes: Additional CSS classes for the card footer (optional)
   
   Usage:
-  {% include 'core/includes/components/card_layout.html' with content=content_html %}
+  {% with content=content_html %}
+    <!-- Include card layout template here -->
+  {% endwith %}
 {% endcomment %}
 
 <div class="card {% if card_classes %}{{ card_classes }}{% endif %}" {% if id %}id="{{ id }}"{% endif %}>

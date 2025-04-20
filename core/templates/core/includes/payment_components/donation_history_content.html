@@ -7,15 +7,15 @@ Parameters:
 {% endcomment %}
 
 {% if payments %}
-    {% include 'core/includes/payments_table.html' with payments=payments %}
+    {% include 'core/includes/payment_components/payments_table.html' with payments=payments %}
 {% else %}
     {% url 'donate' as default_donate_url %}
-    {% include 'core/includes/empty_donations.html' with donate_url=donate_url|default:default_donate_url %}
+    {% include 'core/includes/payment_components/empty_donations.html' with donate_url=donate_url|default:default_donate_url %}
 {% endif %}
 
 <div class="d-flex justify-content-between mt-3">
-    {% include 'core/includes/action_buttons.html' with 
+    {% include 'core/includes/components/action_buttons.html' with 
         primary_url="home" primary_label="Return to Home" primary_icon="bi-house" primary_class="btn-outline-primary" container_class="" %}
-    {% include 'core/includes/action_buttons.html' with 
+    {% include 'core/includes/components/action_buttons.html' with 
         primary_url=donate_url|default:"donate" primary_label="Make a New Donation" primary_icon="bi-cash-coin" primary_class="btn-success" container_class="" %}
 </div>

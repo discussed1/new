@@ -10,7 +10,7 @@
   - table_class: Additional CSS classes for the table (default: "table-striped")
   
   Usage:
-  {% include 'core/includes/payments_table.html' with payments=payments %}
+  {% include 'core/includes/payment_components/payments_table.html' with payments=payments %}
 {% endcomment %}
 
 {% load i18n %}
@@ -51,7 +51,7 @@
                     
                     {% if show_status|default:True %}
                     <td>
-                        {% include 'core/includes/payment_status_badge.html' with status=payment.status %}
+                        {% include 'core/includes/payment_components/payment_status_badge.html' with status=payment.status %}
                     </td>
                     {% endif %}
                     
