@@ -7,7 +7,7 @@ class LoginView(BaseLoginView):
     """
     Custom login view that uses the consolidated auth_page.html template
     """
-    template_name = "account/auth_page.html"
+    template_name = "core/account/auth_page.html"
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -26,7 +26,7 @@ class SignupView(BaseSignupView):
     """
     Custom signup view that uses the consolidated auth_page.html template
     """
-    template_name = "account/auth_page.html"
+    template_name = "core/account/auth_page.html"
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -45,7 +45,7 @@ class PasswordResetView(BasePasswordResetView):
     """
     Custom password reset view that uses the consolidated auth_page.html template
     """
-    template_name = "account/auth_page.html"
+    template_name = "core/account/auth_page.html"
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
