@@ -87,4 +87,7 @@ class MessageView(BaseMessageView):
         if context.get('message') and not context['message'].pk:
             # If for some reason pk is empty, get it from kwargs
             context['message'].pk = self.kwargs.get('message_id')
+        
+        # Add message_id to context for URL reversing in template
+        context['message_id'] = self.kwargs.get('message_id')
         return context

@@ -277,7 +277,7 @@
                             {% endif %}
                                 
                                 <div class="d-flex">
-                                    <a href="{% url 'postman:reply' view.kwargs.message_id %}" class="btn btn-primary">
+                                    <a href="{% url 'postman:reply' message_id %}" class="btn btn-primary">
                                         <i class="bi bi-reply-fill me-1"></i> {% trans "Reply" %}
                                     </a>
                                     <a href="{{ next_url }}" class="btn btn-outline-secondary ms-2">

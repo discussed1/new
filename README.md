@@ -533,8 +533,10 @@ The platform now includes django-comments-xtd for an enhanced commenting experie
 
 ## Known Issues
 
-1. There is an issue with URL reversing in the messaging system that needs to be fixed.
-2. CKEditor 4.22.1 has security vulnerabilities and should be updated to the LTS version or replaced with CKEditor 5.
+All previously known issues have been fixed:
+
+1. ✅ Fixed the URL reversing issue in the messaging system by properly passing message_id to the template context.
+2. ✅ Updated CKEditor to the latest LTS version (6.7.0) to address security vulnerabilities.
 
 ## License
 
