@@ -25,7 +25,7 @@
     
     {% include 'core/includes/forms/form_field.html' with field=form.donation_type label_text="Donation Amount" label_class="fw-bold" %}
     
-    <div id="custom-amount-group" class="form-group mb-3" style="{% if form.donation_type.value != '0' %}display: none;{% endif %}">
+    <div id="custom-amount-group" class="form-group mb-3" style="{% if form.donation_type.value != 0 and form.donation_type.value != '0' %}display: none;{% endif %}">
         {% include 'core/includes/forms/form_field.html' with field=form.custom_amount label_text="Custom Amount ($)" label_class="fw-bold" %}
     </div>
     

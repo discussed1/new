@@ -22,7 +22,7 @@
     <!-- Card layout version - create table first -->
     {% with table_content=payment.id %}
     <!-- We're just using payment.id to initialize the variable -->
-    {% with table_content %}
+    {% with %}
     <table class="table {{ table_class|default:'table-bordered' }}">
         {% if payment.id and show_id %}
         <tr>

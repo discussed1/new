@@ -1022,7 +1022,10 @@ function toggleCustomAmount() {
         return; // Exit if we're not on the donation page
     }
     
-    if (donationTypeSelect.value === '0') {
+    // Handle both string and integer values for donation_type
+    const donationValue = parseInt(donationTypeSelect.value);
+    
+    if (donationValue === 0) {
         customAmountGroup.style.display = 'block';
     } else {
         customAmountGroup.style.display = 'none';

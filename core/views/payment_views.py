@@ -35,17 +35,27 @@ def donate(request):
                 amount = custom_amount
             else:
                 # Use predefined amounts based on donation type
-                if donation_type == 'small':
+                if donation_type == 0:  # Custom amount
+                    amount = custom_amount or decimal.Decimal('5.00')  # Fallback to 5.00 if no custom amount
+                elif donation_type == 5:  # Small donation
                     amount = decimal.Decimal('5.00')
-                elif donation_type == 'medium':
+                elif donation_type == 10:  # Medium donation
                     amount = decimal.Decimal('10.00')
-                elif donation_type == 'large':
+                elif donation_type == 25:  # Large donation
                     amount = decimal.Decimal('25.00')
-                elif donation_type == 'extra_large':
-                    amount = decimal.Decimal('50.00')
             
             # Generate unique payment description
-            payment_description = f"Donation: {donation_type.capitalize()}"
+            if donation_type == 0:
+                payment_description = "Donation: Custom Amount"
+            elif donation_type == 5:
+                payment_description = "Donation: Small ($5)"
+            elif donation_type == 10:
+                payment_description = "Donation: Medium ($10)"
+            elif donation_type == 25:
+                payment_description = "Donation: Large ($25)"
+            else:
+                payment_description = f"Donation: ${amount}"
+                
             if description:
                 payment_description += f" - {description}"
             
@@ -75,7 +85,8 @@ def donate(request):
             
             # Store the donation_type in extra_data
             payment.extra_data = {'donation_type': donation_type}
-            payment.save(update_fields=['extra_data'])
+            payment.donation_type = donation_type
+            payment.save(update_fields=['extra_data', 'donation_type'])
             
             try:
                 # Redirect to the payment processor
@@ -88,7 +99,7 @@ def donate(request):
     return render(request, 'core/payments/payment_page.html', {
         'form': form,
         'title': 'Make a Donation',
-        'page_type': 'donate'
+        'page_type': 'form'
     })
 
 
