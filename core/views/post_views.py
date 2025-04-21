@@ -115,6 +115,9 @@ def post_detail(request, pk):
     else:
         post.user_vote = None
     
+    # Get all comments for this post using MPTT
+    all_comments = Comment.objects.filter(post=post).order_by('tree_id', 'lft')
+    
     # Get root comments for this post using MPTT
     comments = Comment.objects.filter(post=post, parent=None).order_by('created_at')
     
@@ -132,11 +135,11 @@ def post_detail(request, pk):
                 if post.author != request.user:
                     Notification.objects.create(
                         recipient=post.author,
-                        actor=request.user,
-                        verb='commented on',
+                        sender=request.user,
+                        notification_type='reply',
                         post=post,
                         comment=comment,
-                        link=reverse('post_detail', kwargs={'pk': post.pk})
+                        text=f"{request.user.username} commented on your post: {post.title}"
                     )
                 
                 messages.success(request, 'Your comment has been added!')
@@ -191,6 +194,7 @@ def post_detail(request, pk):
         context = {
             'post': post,
             'comments': comments,
+            'all_comments': all_comments,
             'comment_form': comment_form,
             'title': post.title,
             'total_comments_count': total_comments_count,
@@ -262,11 +266,11 @@ def comment_thread(request, pk):
                 if comment.author != request.user:
                     Notification.objects.create(
                         recipient=comment.author,
-                        actor=request.user,
-                        verb='replied to',
+                        sender=request.user,
+                        notification_type='reply',
                         post=post,
                         comment=new_comment,
-                        link=reverse('comment_thread', kwargs={'pk': comment.pk})
+                        text=f"{request.user.username} replied to your comment"
                     )
                 
                 messages.success(request, 'Your reply has been added!')
@@ -431,21 +435,21 @@ def add_comment(request, post_id):
                 # Notification for reply to a comment
                 Notification.objects.create(
                     recipient=comment.parent.author,
-                    actor=request.user,
-                    verb='replied to',
+                    sender=request.user,
+                    notification_type='reply',
                     post=post,
                     comment=comment,
-                    link=reverse('post_detail', kwargs={'pk': post.pk})
+                    text=f"{request.user.username} replied to your comment"
                 )
             elif post.author != request.user:
                 # Notification for comment on a post
                 Notification.objects.create(
                     recipient=post.author,
-                    actor=request.user,
-                    verb='commented on',
+                    sender=request.user,
+                    notification_type='reply',
                     post=post,
                     comment=comment,
-                    link=reverse('post_detail', kwargs={'pk': post.pk})
+                    text=f"{request.user.username} commented on your post: {post.title}"
                 )
             
             messages.success(request, 'Your comment has been added!')
