@@ -315,20 +315,20 @@ TAGGIT_CASE_INSENSITIVE = True
 COUNTRIES_FLAG_URL = 'https://flagicons.lipis.dev/flags/4x3/{code}.svg'
 
 # Django Payments settings
-PAYMENT_HOST = '0.0.0.0:5000'
+PAYMENT_HOST = '0.0.0.0:12001'  # Updated to match our server port
 PAYMENT_USES_SSL = False
 PAYMENT_MODEL = 'core.Payment'
 PAYMENT_VARIANTS = {
     'default': ('payments.dummy.DummyProvider', {}),
     'paypal': ('payments.paypal.PaypalProvider', {
-        'client_id': '',
-        'secret': '',
+        'client_id': 'test_client_id',
+        'secret': 'test_secret',
         'endpoint': 'https://api.sandbox.paypal.com',
         'capture': True,
     }),
     'stripe': ('payments.stripe.StripeProvider', {
-        'secret_key': '',
-        'public_key': '',
+        'secret_key': 'sk_test_123456789',
+        'public_key': 'pk_test_123456789',
     })
 }
 
@@ -365,14 +365,11 @@ HITCOUNT_KEEP_HIT_ACTIVE = {'days': 7}
 HITCOUNT_HITS_PER_IP_LIMIT = 0  # Unlimited hits per IP
 HITCOUNT_EXCLUDE_USER_GROUP = ()  # Don't exclude any user groups
 
-# Django Redis settings
+# Django Cache settings - using local memory for testing
 CACHES = {
     "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        }
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "unique-snowflake",
     }
 }
 
