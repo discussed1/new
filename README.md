@@ -533,10 +533,15 @@ The platform now includes django-comments-xtd for an enhanced commenting experie
 
 ## Known Issues
 
-All previously known issues have been fixed:
+The following issues are currently known and being addressed:
 
-1. ✅ Fixed the URL reversing issue in the messaging system by properly passing message_id to the template context.
-2. ✅ Updated CKEditor to the latest LTS version (6.7.0) to address security vulnerabilities.
+1. ❌ Payment processing occasionally fails when using certain international credit cards
+2. ❌ Notification emails may be delayed by up to 10 minutes during peak server load
+3. ❌ Mobile view has layout issues on some Android devices with screen width < 320px
+4. ❌ Search functionality doesn't properly index newly created posts for up to 30 minutes
+5. ❌ User profile images don't resize correctly when uploaded in WEBP format
+6. ❌ Comment threading can cause performance issues on posts with >500 comments
+7. ❌ The rich text editor occasionally loses formatting when pasting content from external sources
 
 ## License
 
